@@ -2,12 +2,7 @@
 % \min_X \|P_\Omega(X-Y)\|^2 s.t. \|X\|_*\le mu <- NNP_LR_SP
 % \min_X 0.5*\mu*\|P_\Omega(X-Y)\|^2 + \|X\|_*
 
-function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu) 
-    % parameters
-    par.tol     = 1e-5;
-    par.maxiter = 1000;
-    par.maxrank = 500;
-    par.verbose = 0;
+function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par) 
     
     Amap  = @(X) Amap_MatComp(X,ii,Jcol);
     if (exist('mexspconvert')==3); 

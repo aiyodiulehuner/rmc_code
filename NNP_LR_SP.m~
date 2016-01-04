@@ -7,7 +7,7 @@ global X spZ
 [X.U,S,X.V]=lansvd('Axz','Atxz',d1,d2,sv,'L',options);
 diagS = diag(S);
 
-diagS = ProjectOntoL1Ball(diagS, mu,2);
+diagS = ProjectOntoL1Ball(diagS, mu, 1);
 
 svp = max(length(find(diagS>1e-15)),1);
 diagS = diagS(1:svp);

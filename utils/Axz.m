@@ -10,4 +10,4 @@
 
   global X spZ
   
-  Az = X.U * (X.V' * z) + spZ * z;
+  Az = X.U * (X.V' * z)+spZ * z;

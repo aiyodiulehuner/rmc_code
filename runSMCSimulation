@@ -1,0 +1,11 @@
+muiter=[0.01,0.05,0.1,0.2,0.5,0.7,1,5,10,20];
+probiter=0.05:0.05:0.95;
+
+function runSMCSimulation(d1,d2,r)
+
+    U=randn(d1,r);
+    V=randn(d2,r);
+    theta=U*V'; 
+    theta=sqrt(d1*d2)*theta/norm(theta,'fro');
+
+r=zeros(length(giter), length(d1iter), length(probiter), length(muiter), length(f));

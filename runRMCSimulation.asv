@@ -1,0 +1,67 @@
+function resultRMC=runRMCSimulation(d1,d2,r,giter,f)
+    
+    addpath('pav')
+    %parameters
+    par.tol     = 1e-5;
+    par.maxiter = 1000;
+    par.maxrank = min([d1,d2,500]);
+    par.verbose = 0;
+        
+    
+    muiter=[0.01,0.05,0.1,0.2,0.5,0.7,1,5,10,20];
+    probiter=0.05:0.05:0.95;    
+    resultRMC=zeros(length(giter), length(probiter), length(muiter), length(f));
+    
+    U=randn(d1,r);
+    V=randn(d2,r);
+    theta=U*V'; 
+    theta=sqrt(d1*d2)*theta/norm(theta,'fro');
+   
+    mu0=sum(svd(theta));%Check
+    Omega=rand(size(theta));
+    
+    for gi=1:length(giter)
+        g=giter{gi};
+        Y=theta;
+        for j=1:d2
+            Y(:,j)=g(theta(:,j));
+        end
+
+        for pi=1:length(probiter)
+            p=probiter(pi);
+            
+            [ii,jj]=find(Omega<=p);
+            YOmega=Y(Omega<=p);
+            [YOmega,ii,Jcol]=processInput(ii,jj,YOmega);
+            PAV_PROBLEM=qpparams(Jcol);
+            for m=1:length(muiter)
+                mu=mu0*muiter(m);
+                [Ysmc,iter,~]=rmc(ii,Jcol,jj,YOmega,d1,d2,par);
+                k=evalRanking(theta,Ysmc.U*Ysmc.V',f);k(3)=sqrt(k(3));
+                fprintf('Size: %dX%d, rk:%d, p:%f, gi:%d, mu:%f, \n\t iter:%d ktau:%f, srho:%f, rmse:%f\n',...
+                    d1,d2,r,p,gi,mu,iter,k(1),k(2),k(3));
+                resultRMC(gi,pi,m,:)= k;                
+            end
+
+        end          
+    end    
+end    
+    
+function PAV_PROBLEM=qpparams(Jcol)
+    n=Jcol(end);d2=
+    PAV_PROBLEM.H=eye(n+d2);
+    PAV_PROBLEM.beq=d2;    
+    PAV_PROBLEM.Aeq=sparse(ones(d2,1),((n+1):(n+d2)),ones(d2,1));
+    PAV_PROBLEM.A=sparse(0,n+d2);
+    for j=1:d2
+        ind = (Jcol(j)+1):Jcol(j+1);
+        nj=length(ind);
+        if nj>0
+            Dj=spdiags([ones(nj-1,2),-ones(nj-1,2)],[0,1],nj-1,n+d2);
+            Dj=Dj+sparse((1:nj-1),(n+j)*ones(nj-1,1),ones(nj-1,1),nj-1,n+d2);
+            PAV_PROBLEM.A=[PAV_PROBLEM.A;Dj];
+        end
+    end
+    PAV_PROBLEM.A=[PAV_PROBLEM.A;[sparse(d2,n),speye(d2)]];
+    PAV_PROBLEM.b=zeros(size(PAV_PROBLEM.A,1),1);
+end

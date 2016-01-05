@@ -9,16 +9,11 @@ function [Yest,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f)
 
     
     Amap  = @(X) Amap_MatComp(X,ii,Jcol);
-    
-    if (length(YOmega)/(d1*d2)>0.6)
-        ATmap = @(y) full(sparse(d1,d2,y,ii,Jcol)); 
-        
+    if (exist('mexspconvert')==3); 
+        if (length(y)/d1*d2)
+        ATmap = @(y) mexspconvert(d1,d2,y,ii,Jcol); 
     else
-        if (exist('mexspconvert')==3); 
-            ATmap = @(y) mexspconvert(d1,d2,y,ii,Jcol); 
-        else
-            ATmap = @(y) sparse([ii,jj,y; d1,d2,0]); 
-        end
+        ATmap = @(y) spconvert([ii,jj,y; d1,d2,0]); 
     end
     
     
@@ -84,7 +79,7 @@ function [Yest,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f)
             fprintf('iter:%d,res:%2g,sv:%d,eps:%2g, ch1:%f, ch2:%0.2g,fval:%0.5g\n',...
                     iter,res,sv,min(eps),ch,norm(Yrt-YOld),ff)
             k=evalRanking(theta,X.U*X.V',f);k(3)=sqrt(k(3));
-            result=[result;[k',nnz(eps)]];
+            result=[result;k'];
         end
         if (fold<ff)
            fprintf('Warning:non-descent step')

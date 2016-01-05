@@ -1,10 +1,10 @@
-function sv=NNP_LR_SP(mu,sv,options)
+function sv=NNP_LR_SP(mu,sv)
 % Computes projection onto mu nuclear norm ball of global matrix X+spZ
 
 global X spZ
 [d1,d2]=size(spZ);
 
-[X.U,S,X.V]=lansvd('Axz','Atxz',d1,d2,sv,'L',options);
+[X.U,S,X.V]=lansvd('Axz','Atxz',d1,d2,sv,'L');
 diagS = diag(S);
 
 diagS = ProjectOntoL1Ball(diagS, mu,2);

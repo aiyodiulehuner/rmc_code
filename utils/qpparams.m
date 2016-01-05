@@ -1,7 +1,7 @@
 function PAV_QP=qpparams(Jcol)
     n=Jcol(end);d2=length(Jcol)-1;
     PAV_QP.H=eye(n+d2);
-    PAV_QP.beq=d2;    
+    PAV_QP.beq=1;    
     PAV_QP.Aeq=sparse(ones(d2,1),((n+1):(n+d2)),ones(d2,1));
     PAV_QP.Aineq=sparse(0,n+d2);
     njsum=0;

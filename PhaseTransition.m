@@ -1,11 +1,12 @@
+rng(42)
 addpath('utils/');
 addpath('NNLS-0/solver');
 addpath('NNLS-0/PROPACKmod/');
 close all;
 clc;clear;clear global;
 
-funcSimulation=@runRMCSimulation;
-outfile='resultRMC_sm';
+funcSimulation=@runSMCSimulation;
+outfile='resultSMC_temp';
 
 niter=1;
 dim_iter={{100,100,5}};%,{250,250,5},{500,500,10}};

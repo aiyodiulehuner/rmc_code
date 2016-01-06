@@ -1,5 +1,5 @@
  function [y,eps,stat]=RetargetColScores_margin(x,eps0,PAV_QP)
-    
+    eps0=0*eps0;
     PAV_QP.f=-[x;eps0];
     %disp(PAV_QP);
     %PAV_QP.x0=[x;eps0];

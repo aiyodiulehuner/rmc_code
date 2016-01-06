@@ -5,8 +5,8 @@
 %TODO: Line search, PAVPROBLEM CHECK
 %TODO: Continuation
     
-function [Yest,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f) 
-
+function [Yest,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f) 
+    acceleration=0;
     Amap  = @(X) Amap_MatComp(X,ii,Jcol);  
     if (length(YOmega)/(d1*d2)>0.6)
         ATmap = @(y) full(sparse(d1,d2,y,ii,Jcol));         
@@ -46,7 +46,12 @@ function [Yest,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f)
     X.V=X.V*sqrt(S);
     XOmega=Amap(X);
     spZ=ATmap(t*(Yrt-XOmega));     
-
+    %----------[X,Y,eps]=[X,Y,eps]^(k),XOmega_=P_O(X^(k))   
+        
+    X_=X;
+    Yrt_=Yrt;
+    eps_=eps;
+    %----------[X_,Y_,eps_]=[X,Y,eps]^(k-1)=[X,Y,eps]^(k)
     
     %% Tracking
     XOld=XOmega;YOld=Yrt; % for exit conditions
@@ -56,7 +61,8 @@ function [Yest,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f)
     
     %% Iterations
     for iter=1:par.maxiter
-        %% UPDATE              
+        %% UPDATE
+        %----------[X,Y,eps]=[Xa,Ya,eps_a]^(k+1),spZ=(Ya^(k+1)-P_O(Xa^(k+1))),XOmega=P_O(Xa^(k+1))              
         %Yupdate              
         [Yrt,eps,stat]=RetargetColScores_margin(XOmega,eps,par.PAV_QP);                
         if par.verbose && abs(stat.exitflag-1)>1e-10
@@ -83,7 +89,31 @@ function [Yest,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f)
         if ((ch<par.tol) || (res<par.tol) || (iter==par.maxiter))          
             break
         end                
-                       
+        
+        
+        %% ACCELERATION (1+w)*[X,Y,eps]^(k+1)-w*[X,Y,eps]^(k)   
+        if (acceleration)
+            w=2/(iter+1); 
+            w=0;       
+            X_t.U=[(1+w)*X.U,-w*X_.U];X_t.V=[X.V,X_.V];
+            eps_t=(1+w)*eps-w*eps_;
+            Yrt_t=(1+w)*Yrt-w*Yrt_;
+            %---------[X_t,Y_t,eps_t]=[Xa,Ya,eps_a]^(k+2)
+
+            %% SETUP FOR NEXT ITERATION 
+            X_=X;
+            Yrt_=Yrt;
+            eps_=eps;
+            %--------[X_,Y_,eps_]=[X,Y,eps]^(k+1) --for (k+3) update
+
+            X=X_t;
+            Yrt=Yrt_t;
+            eps=eps_t;
+
+            XOmega=Amap(X);         
+            spZ=ATmap(t*(Yrt-XOmega));     
+            %---------[X,Y,eps]=[Xa,Ya,eps_a]^(k+2),spZ=(Ya^(k+2)-P_O(Xa^(k+2))),XOmega=P_O(Xa^(k+1))
+        end
     end
         
     Yest=X;

@@ -43,7 +43,7 @@ probiter=0.05:0.05:0.95;
 if a
     %muiter=[0.1,0.2,0.5,0.7,1,5,10,20];
     %u0=sum(svd(theta));
-
+    
     muiter=[0.05,0.1,0.5,1,10];
     mu0=1;
     resultSMC=zeros(length(muiter),3);
@@ -58,13 +58,14 @@ if a
 end
 
 if b
-    muiter=[0.05];
+    muiter=[0.1];
     mu0=1;
     resultRMC=zeros(length(muiter),3);
-    par.PAV_QP=qpparams(Jcol);
+    par.PAV_QP=qpparams_pav_margin(Jcol);
+    
     for m=1:length(muiter)
         mu=mu0*muiter(m);
-        [Ysmc,iter,~,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f);
+        [Ysmc,eps,iter,~,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f);
 
 
         k=evalRanking(theta,Ysmc.U*Ysmc.V',f);k(3)=sqrt(k(3));

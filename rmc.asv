@@ -5,7 +5,7 @@
 %TODO: Line search, PAVPROBLEM CHECK
 %TODO: Continuation
     
-function [Yest,Yrt,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f) 
+function [Yest,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f) 
 
     Amap  = @(X) Amap_MatComp(X,ii,Jcol);  
     if (length(YOmega)/(d1*d2)>0.6)
@@ -34,11 +34,8 @@ function [Yest,Yrt,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta
     end
     assert(all(eps>=0));
     scale=sum(eps);
-    Yrt = YOmega/scale;        
-    for j=1:length(Jcol)-1
-        ind = Jcol(j)+1:Jcol(j+1);
-        eps(j) = min(diff(Yrt(ind)));
-    end
+    Yrt = YOmega/scale;    
+    eps=eps/scale; 
     mu=mu/scale;
     
     %% Assign Variables
@@ -61,7 +58,7 @@ function [Yest,Yrt,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta
     for iter=1:par.maxiter
         %% UPDATE              
         %Yupdate              
-        [Yrt,eps,stat]=RetargetColScores_margin(XOmega,eps,par.PAV_QP);                
+        [Yrt,eps,stat]=RetargetColScores_margin(XOmega,d2,par.PAV_QP);                
         if par.verbose && abs(stat.exitflag-1)>1e-10
             fprintf('Warning: Retargeting exited with fval:%f, exitflag:%f\n',stat.fval,stat.exitflag)
         end 
@@ -84,8 +81,7 @@ function [Yest,Yrt,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta
         end     
         XOld=XOmega;YOld=Yrt;
         if (mod(iter,10)==0)
-            plot(sort(eps));hold on;
-        end
+            plot(sort(eps))
         if ((ch<par.tol) || (res<par.tol) || (iter==par.maxiter))          
             break
         end                

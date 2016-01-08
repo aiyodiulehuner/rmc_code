@@ -17,7 +17,7 @@
    end
    mexcmd = 'mex -O  -largeArrayDims  -output ';    
 
-   eval([mexcmd, 'mexeig mexeig.c',libstr]);  
-   eval([mexcmd, 'mexsvd mexsvd.c',libstr]);  
+   eval([mexcmd, 'mexeig mexeig.c ',libstr]);  
+   eval([mexcmd, 'mexsvd mexsvd.c ',libstr]);  
 
-   eval([mexcmd, 'reorth mexreorth.c',libstr]);
+   eval([mexcmd, 'reorth mexreorth.c ',libstr]);

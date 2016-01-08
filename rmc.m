@@ -9,12 +9,12 @@ function [Yest,eps,iter,res,result]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par,theta,f)
 
     Amap  = @(X) Amap_MatComp(X,ii,Jcol);  
     if (length(YOmega)/(d1*d2)>0.6)
-        ATmap = @(y) full(sparse(d1,d2,y,ii,Jcol));         
+        ATmap = @(y) full(sparse(ii,jj,y, d1,d2));
     else
         if (exist('mexspconvert')==3); 
             ATmap = @(y) mexspconvert(d1,d2,y,ii,Jcol); 
         else
-            ATmap = @(y) sparse([ii,jj,y; d1,d2,0]); 
+            ATmap = @(y) sparse(ii,jj,y, d1,d2); 
         end
     end
     

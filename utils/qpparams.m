@@ -20,5 +20,5 @@ function PAV_QP=qpparams(Jcol)
     PAV_QP.lb=[];
     PAV_QP.ub=[];
     PAV_QP.solver='quadprog';
-    PAV_QP.options=optimset('Display','off','Algorithm','interior-point-convex');
+    PAV_QP.options=optimset('Display','off','Algorithm','interior-point-convex','TolFun',1e-16);
 end

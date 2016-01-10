@@ -35,10 +35,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     n = (int)dims[1];
     dims = mxGetDimensions(prhs[1]);
     d2 = (int)dims[1];
-    mexPrintf("%d,%d\n", n,d2);
+    //mexPrintf("%d,%d\n", n,d2);
     //associate outputs
     plhs[0] = mxCreateDoubleMatrix((int)dims[0],n,mxREAL);
-    if (verbose==2){
+    if (verbose>=1){
         mexPrintf("In\n");
         mexPrintf("%d %d\n", n, d2);
     }
@@ -71,20 +71,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   
     if (verbose==2){
         mexPrintf("w: ");
-        print_const_size_array(z, n);
+        print_const_size_array(w, n);
     }
     
     if (verbose==2){
         mexPrintf("eps * v: ");
         print_const_size_array(v, n);
     }
-    
+    double temp[n];
     vec_add(w, v, n, z);
     if (verbose==2){
         mexPrintf("w + eps * v: ");
         print_const_size_array(z, n);
     }
-    
+    //std::memcpy(z, temp, sizeof w);
     //mexPrintf("chck");
     return;        
 }

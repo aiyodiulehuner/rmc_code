@@ -8,7 +8,7 @@ rng('shuffle')
 outfile='resultTest.m';
 rmc=1;
 niter=1;
-d1=50;d2=50;r=2;
+d1=50;d2=50;r=5;
 f={'spearman_rho', 'kendall_tau', @(x,y)norm(x-y)^2/length(x-y)};
 
 U=randn(d1,r);
@@ -17,7 +17,7 @@ theta=U*V';
 Y=sqrt(d1*d2)*theta/norm(theta,'fro');
 Omega=rand(size(theta));
 
-par.tol     = 1e-5;
+par.tol     = 1e-6;
 par.maxiter = 1000;
 par.maxrank = min([d1,d2,500]);
 par.verbose = 1;
@@ -25,8 +25,7 @@ par.verbose = 1;
 piter=1;
 %result=ones(length(piter),4);
 
-%for pi=1:length(piter)
-pi=1
+for pi=1:length(piter)
 p=piter(pi);
 [ii,jj]=find(Omega<=p);
 YOmega=Y(Omega<=p);
@@ -62,7 +61,7 @@ sv=20;
 t=1;%stepsize
 
 Yrt=YOmega;
-rinit=10;X.U=zeros(d1,rinit);X.V=zeros(d2,rinit);
+X.U=randn(d1,r);X.V=randn(d2,r);
 XOmega=Amap(X);
 spZ=ATmap(t*(Yrt-XOmega)); 
 
@@ -84,8 +83,7 @@ for j=0:50
     for iter=1:par.maxiter
         %% UPDATE                  
         %Xupdate    
-        sv=SVT_LR_SP(t*mu,min(sv,par.maxrank));%SVT of X+spZ   
-        %X.U=(sqrt(d1*d2/(sum(X.U.^2)*sum(X.V.^2)')))*X.U;
+        sv=SVT_LR_SP(t*mu,min(sv,par.maxrank));%SVT of X+spZ           
         XOmega=Amap(X);
         %Yupdate      
         if (rmc)
@@ -119,7 +117,9 @@ for j=0:50
          break
     end    
 end
-
+end
+norm(Yrmc-X.U*X.V'+full(spZ))
+Yrmc=X.U*X.V'+full(spZ);
 %% 
 Yrmc=X.U*X.V'+full(spZ);
 k=evalRanking(theta,Yrmc,f);k(3)=sqrt(k(3));

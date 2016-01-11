@@ -20,8 +20,9 @@ Omega=rand(size(theta));
 par.tol     = 1e-5;
 par.maxiter = 1000;
 par.maxrank = min([d1,d2,500]);
-par.verbose = 1;
-
+par.verbose = 0;
+Yold=zeros(size(Y));
+for n=1:5
 piter=1;
 %result=ones(length(piter),4);
 
@@ -62,7 +63,7 @@ sv=20;
 t=1;%stepsize
 
 Yrt=YOmega;
-rinit=10;X.U=zeros(d1,rinit);X.V=zeros(d2,rinit);
+rinit=10;X.U=randn(d1,rinit);X.V=randn(d2,rinit);
 XOmega=Amap(X);
 spZ=ATmap(t*(Yrt-XOmega)); 
 
@@ -75,8 +76,9 @@ XOld=XOmega;YOld=Yrt; % for exit conditions
 mu0=1; 
 result=[];   
 mu=mu0;
+
 for j=0:50
-    mu=10^(-j)*mu0;
+    mu=1^(-j)*mu0;
     fprintf('mu:%f\n',mu);
     ff=0.5*norm(XOmega-Yrt)^2;
     disp(ff)
@@ -122,10 +124,12 @@ end
 
 %% 
 Yrmc=X.U*X.V'+full(spZ);
+norm(Yold-Yrmc)
+Yold=Yrmc;
 k=evalRanking(theta,Yrmc,f);k(3)=sqrt(k(3));
 k1=evalRanking(theta,X.U*X.V',f);k(3)=sqrt(k(3));
 fprintf('Size: %dX%d, rk:%d, p:%f, mu:(%f,%f), normspZ:%f \n\t iter:%d ktau:(%f,%f), srho:(%f,%f), rmse:(%f,%f)\n',...
         d1,d2,r,p,sum(svd(Yrmc)),sum(svd(X.U*X.V')),norm(spZ,'fro'),iter,k(1),k1(1),k(2),k1(2),k(3),k1(3));    
 s=svd(Yrmc);    
-%result(pi,1:3)=k; result(pi,4)=find(cumsum(s.^2)/sum(s.^2)>(1-1e-5),1); 
 end
+%result(pi,1:3)=k; result(pi,4)=find(cumsum(s.^2)/sum(s.^2)>(1-1e-5),1); 

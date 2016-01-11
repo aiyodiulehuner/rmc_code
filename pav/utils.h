@@ -40,18 +40,15 @@ namespace margin_utils {
   const T  operator() (const T& x, const T& y) const {T r = (x-y); return r*r;}
   };
 
-  template <class T> const T dist(const T* m_old, const T* m_new, size_t size)
-   __attribute__((pure));
+  template <class T> const T dist(const T* m_old, const T* m_new, size_t size)__attribute__((pure));
  
-  template <class T>
-  const T dist(const T* m_old, const T* m_new, size_t size) {
+  template <class T> const T dist(const T* m_old, const T* m_new, size_t size) {
       return  inner_product(m_old, m_old + size, m_new, static_cast<T>(0),
                         plus<T>(), scalar_sq_dist<T>() );
   }
 
 
- template <class T>
-  inline T advanced(const T& iter, size_t size) {
+ template <class T> inline T advanced(const T& iter, size_t size) {
     T ret =  iter;
     advance(ret, size);
     return ret;
@@ -60,8 +57,7 @@ namespace margin_utils {
 
  // Adds the reverse_iterator functionalities that we
  // need and slightly faster dereferencing of the iterator
- template <class T>
-  struct rev_iter : public iterator<
+ template <class T> struct rev_iter : public iterator<
                        //bidirectional_iterator_tag,
                        typename iterator_traits<T>::iterator_category,
                        typename iterator_traits<T>::value_type

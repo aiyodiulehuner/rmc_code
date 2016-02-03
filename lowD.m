@@ -5,27 +5,28 @@ addpath('NNLS-0/PROPACKmod/');
 addpath('pav');
 
 rmc = 1;
-niter = 1;
-d1 = 50; d2 = 50; r = 2;
+d1 = 100; r = 5;
 %U = randn(d1,r);
-%V = randn(d2,r);
-%theta = U*V'; 
-%Y = sqrt(d1*d2)*theta/norm(theta,'fro');
-load('theta'); load('Y'); load('Yrmc');
+%v = randn(r,1);v=v/norm(v);
+%y = U*v; 
+load('U'); load('v'); load('y');
+[y,ix]=sort(y);U=U(ix,:);
+
+outfile = 'resultTest.m';
 
 f = {'spearman_rho', 'kendall_tau', @(x,y)norm(x-y)^2/length(x-y)};
-outfile = 'resultTest.m';
+niter = 1;
 piter = 1;
 result = zeros(niter,length(piter),length(f)+1);
 
-
-
+par.mu0 = 1;%3.306146
+%par.mutarget=3.3;
 par.tol     = 1e-6;
 par.maxiter = 500;
 par.maxrank = min([d1,d2,500]);
 par.verbose = 0;
-par.r = r;%3.306146
-%par.mutarget=3.3;
+par.continuation = 0.5;
+
 
 debug = {theta,f};
 
@@ -33,23 +34,22 @@ Yold = zeros(size(theta));
 
 for n=1:niter
     rng('shuffle')
-    Omega=rand(size(theta));    
+    Omega=rand(size(y));    
     for pi=1:length(piter)
         p=piter(pi);
-        [ii,jj]=find(Omega<=p);
-        YOmega=Y(Omega<=p);
-        [YOmega,ii,Jcol]=processInput(ii,jj,YOmega);
-        YrOmega=Amap_MatComp(Yrmc,ii,Jcol); 
+        ii=find(Omega<=p);
+        yOmega=y(Omega<=p);        
         eps=zeros(d2,1);
         for j=1:length(Jcol)-1
             ind = Jcol(j)+1:Jcol(j+1);
             if length(ind)<2
                 continue
             end
-            eps(j) = min(diff(YOmega(ind)));        
+            eps(j) = min(diff(yOmega(ind)));        
         end        
         assert(all(eps>0))
-        [X,spZ]=RMC_exact_fixed_margin_altmin(ii,jj,Jcol,YOmega,eps,d1,d2,par,debug);
+        %eps=ones(size(eps))*(1.0/d2);
+        [X,spZ]=RMC_exact_fixed_margin(ii,jj,Jcol,yOmega,eps,d1,d2,par,debug);
     end
     %% Results
     if ~isempty(debug)

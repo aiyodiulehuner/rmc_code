@@ -26,6 +26,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     
     const mwSize *dims;
     int n, d2;
+    int c=0;
     const int verbose=0;
     
     
@@ -34,8 +35,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     dims = mxGetDimensions(prhs[0]);
     n = (int)dims[1];
     dims = mxGetDimensions(prhs[1]);
-    d2 = (int)dims[1];
-    //mexPrintf("%d,%d\n", n,d2);
+    if ((int)dims[1]==n)
+        c=1;
+    dims = mxGetDimensions(prhs[2]);
+    d2 = (int)dims[1]-1;
+    //mexPrintf("%d,%d,%d\n", n,d2,c);
     //associate outputs
     plhs[0] = mxCreateDoubleMatrix((int)dims[0],n,mxREAL);
     if (verbose>=1){
@@ -62,7 +66,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         double norm_d_sq=nj*(nj*nj-1)/12.0;  
         
         for(int i=0; i<nj; i++)
-            v[js+i] = eps[j]*((nj-1)/2.0+i);
+            if (c)
+                v[js+i] = eps[js+i];
+            else
+                v[js+i] = eps[j]*(-(nj-1)/2.0+i);
         
         double temp[nj];        
         vec_sub(&y[js], &v[js], nj, temp);

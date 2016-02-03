@@ -6,11 +6,12 @@ global X spZ
 
 [X.U,S,X.V]=lansvd('Axz','Atxz',d1,d2,sv,'L');
 diagS = diag(S);
+svp = max(length(find(diagS>1e-15)),1);
+diagS = diagS(1:svp);
 
 diagS = ProjectOntoL1Ball(diagS, mu,2);
 
-svp = max(length(find(diagS>1e-15)),1);
-diagS = diagS(1:svp);
+
 
 if svp < sv %|| iter < 10
     sv = min(svp + 1, d2);

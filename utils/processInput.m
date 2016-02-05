@@ -1,4 +1,5 @@
-
+%inputs ii,jj,yy and returns csc format: ii is indices, Jcol is indptr start at 0
+%ii(Jcol(j)+1:Jcol(j+1)) is such that yy(Jcol(j)+1:Jcol(j+1)) is sorted min:max
 
 function [yys,iis,Jcol]=processInput(ii,jj,yy)
     assert(length(ii)==length(yy));assert(issorted(jj));

@@ -7,11 +7,10 @@ addpath('pav');
 rmc = 1;
 niter = 1;
 d1 = 50; d2 = 50; r = 2;
-%U = randn(d1,r);
-%V = randn(d2,r);
-%theta = U*V'; 
-%Y = sqrt(d1*d2)*theta/norm(theta,'fro');
-load('theta'); load('Y'); load('Yrmc');
+U = randn(d1,r);
+V = randn(d2,r);
+theta = U*V'; 
+Y = sqrt(d1*d2)*theta/norm(theta,'fro');
 
 f = {'spearman_rho', 'kendall_tau', @(x,y)norm(x-y)^2/length(x-y)};
 outfile = 'resultTest.m';

@@ -17,7 +17,7 @@ if svp < sv %|| iter < 10
     sv = min(svp + 1, d2);
     %sv=sv;
 else
-    sv = min(svp + 10, d2);
+    sv = min(2*svp, d2);
 end
 
 X.U = X.U(:, 1:svp) * diag(sqrt(diagS));

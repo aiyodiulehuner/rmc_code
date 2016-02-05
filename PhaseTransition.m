@@ -5,13 +5,13 @@ addpath('NNLS-0/PROPACKmod/');
 close all;
 clc;clear;clear global;
 
-funcSimulation=@runSMCSimulation;
-outfile='resultSMC';
+funcSimulation=@runRMCSimulation;
+outfile='resultRMC';
 
-niter=3;
-dim_iter={{100,100,5},{250,250,5}};
+niter=1;
+dim_iter={{100,100,5}};
 
-c=2:2:10;
+c=2:2:8;
 giter = cell(0);
 giter{1}=@(a) a;
 for ci=1:length(c)   
@@ -21,7 +21,7 @@ f={'spearman_rho', 'kendall_tau', 'NDCG'};
 
 result=cell(niter*length(dim_iter),1);
 
-parfor ix=1:niter*length(dim_iter)
+for ix=1:niter*length(dim_iter)
     [n,i]=ind2sub([niter,length(dim_iter)],ix);
     [d1,d2,r]=dim_iter{i}{:};
     result{ix}=funcSimulation(d1,d2,r,giter,f);

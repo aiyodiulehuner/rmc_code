@@ -34,13 +34,12 @@ function resultRMC=runRMCSimulation(d1,d2,r,giter,f)
             YOmega=Y(Omega<=p);
             [YOmega,ii,Jcol]=processInput(ii,jj,YOmega);     
             fprintf('Size: %dX%d, rk:%d, p:%f, gi:%d\n',d1,d2,r,p,gi);
-
             for m=1:length(muiter)
                 mu=mu0*muiter(m);
-                [Yrmc,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu,par);
-                k=evalRanking(theta,Yrmc.U*Yrmc.V',f);
-                fprintf('\t mu:%f. iter:%d, res:%f, ||X||_*:%f, ktau:%f, srho:%f, ndcg:%f\n',...
-                    mu, iter,res,sum(sum(Ysmc.U.^2)),k(1),k(2),k(3));
+                [Yrmc,iter,~]=rmc(ii,Jcol,jj,YOmega,d1,d2,mu,par);
+                k=evalRanking(theta,Yrmc.U*Yrmc.V',f);k(3)=sqrt(k(3));
+                fprintf('Size: %dX%d, rk:%d, p:%f, gi:%d, mu:%f, \n\t iter:%d ktau:%f, srho:%f, rmse:%f\n',...
+                    d1,d2,r,p,gi,mu,iter,k(1),k(2),k(3));
                 resultRMC(gi,pi,m,:)= k;                
             end
         end          

@@ -8,7 +8,8 @@ function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par)
         ATmap = @(y) mexspconvert(d1,d2,y,ii,Jcol); 
     else
         ATmap = @(y) spconvert([ii,jj,y; d1,d2,0]); 
-    end    
+    end
+    
     
     global X spZ
     sv=50;
@@ -37,7 +38,7 @@ function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par)
         spZ=ATmap(YOmega-XOmega);
         
         if par.verbose
-            fprintf('iter:%d,res:%2g,ch=%f,sv:%d, mu:%f/%f\n',iter,res,ch,sv,mu,sum(sum(X.U.^2)))
+            fprintf('iter:%d,res:%2g,ch=%chsv:%d\n',iter,res,sv)
         end
     end
         

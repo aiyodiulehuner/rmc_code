@@ -7,8 +7,8 @@ function resultSMC=runSMCSimulation(d1,d2,r,giter,f)
     par.verbose = 0;
     par.nnp=1;
 
-    muiter=[0.05,0.1,0.5,1,5,10];
-    probiter=0.05:0.05:0.95;    
+    muiter=[0.1,0.5,1,5,10];
+    probiter=0.1:0.1:0.9;    
     %probiter=[0.4];
     resultSMC=zeros(length(giter), length(probiter), length(muiter), length(f));
     U=randn(d1,r);
@@ -37,7 +37,7 @@ function resultSMC=runSMCSimulation(d1,d2,r,giter,f)
             for m=1:length(muiter)
                 mu=mu0*muiter(m);
                 [Ysmc,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par);
-                k=evalRanking(theta,Ysmc.U*Ysmc.V',f);k(3)=sqrt(k(3));
+                k=evalRanking(theta,Ysmc.U*Ysmc.V',f);
                 fprintf('\t mu:%f. iter:%d, res:%f, ||X||_*:%f, ktau:%f, srho:%f, ndcg:%f\n',...
                     mu, iter,res,sum(sum(Ysmc.U.^2)),k(1),k(2),k(3));
                 resultSMC(gi,pi,m,:)= k;                

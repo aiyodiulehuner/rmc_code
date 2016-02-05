@@ -1,7 +1,7 @@
 %% X = RMC_exact_fixed_margin(ii,jj,Jcol,YOmega,eps,d1,d2)
 % min ||X||_* st DX_j<= -eps_j 
 %[Xest,spZest,stat]
-function [Yest,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu,par)
+function [Yest,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par)
 
 Amap  = @(X) Amap_MatComp(X,ii,Jcol);  
 if (length(YOmega)/(d1*d2)>0.6)
@@ -31,9 +31,10 @@ X.U=zeros(d1,rinit);X.V=zeros(d2,rinit);
 XOmega=Amap(X);
 spZ=ATmap((Yrt-XOmega)/2);
 Xold=XOmega;
-par.continuation=0.5;mu0=222/par.continuation;
+
+par.continuation=0.5;mu0=mu0/par.continuation;
 ch=0; res=0; mu=mu0;
-for j=0:0
+for j=0:5
     if res<par.tol && ch<par.tol
         mu=par.continuation*mu;    
         if ismember('mutarget', fieldnames(par))
@@ -46,13 +47,13 @@ for j=0:0
 for iter=1:par.maxiter
     %% UPDATE                  
     sv=NNP_LR_SP(mu,min(sv,par.maxrank));
-    XOmega=Amap(X);
-    Yrt=c_colMR_fixed_margin(((Yrt+XOmega)/2)',eps',Jcol); Yrt=Yrt';  
 
+    Yrt=c_colMR_fixed_margin(((Yrt+XOmega)/2)',eps',Jcol); Yrt=Yrt';  
+    XOmega=Amap(X);
     spZ=ATmap((Yrt-XOmega)/2);     
 
     %% EXIT CONDITIONS
-    res=norm(Yrt-XOmega)/sqrt(length(XOmega));   
+    res=norm(Yrt-XOmega);   
     ch=norm(Xold-XOmega)/sqrt(length(XOmega));
     Xold=XOmega;
     if par.verbose
@@ -64,7 +65,6 @@ for iter=1:par.maxiter
         break
     end                
 end
-k=evalRanking(theta,X.U*X.V',f)
 if (par.continuation>=1)
      break
 end  

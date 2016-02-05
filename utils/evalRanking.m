@@ -44,7 +44,7 @@ function ndcg_k=NDCG(x,y)
     if size(y,2)>1
         y=y';
     end
-    k=length(x);
+    k=50;
     [xx,ii]=sort(x,'descend');
     r=(1:length(xx))';%r=1 for highest x, 2 for second highest, ...ri=rank(i) in x
     l=y(ii);%l=l/max(l);

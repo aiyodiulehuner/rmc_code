@@ -28,17 +28,16 @@ function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par)
         
         XOmega=Amap(X);
         res=norm(XOmega-YOmega);
-        ch=norm(XOld-XOmega);
+        ch=norm(XOld-XOmega)/length(XOmega);
+        if par.verbose
+            fprintf('iter:%d,res:%2g,ch=%f,sv:%d, mu:%f/%f\n',iter,res,ch,sv,mu,sum(sum(X.U.^2)))
+        end
         if ch<par.tol || res<par.tol 
             break
         end
         
         XOld=XOmega;
-        spZ=ATmap(YOmega-XOmega);
-        
-        if par.verbose
-            fprintf('iter:%d,res:%2g,ch=%f,sv:%d, mu:%f/%f\n',iter,res,ch,sv,mu,sum(sum(X.U.^2)))
-        end
+        spZ=ATmap(YOmega-XOmega);                
     end
         
     Yest=X;

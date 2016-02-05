@@ -11,7 +11,7 @@ outfile='resultSMC';
 niter=3;
 dim_iter={{100,100,5},{250,250,5}};
 
-c=1:5;
+c=2:2:10;
 giter = cell(0);
 giter{1}=@(a) a;
 for ci=1:length(c)   

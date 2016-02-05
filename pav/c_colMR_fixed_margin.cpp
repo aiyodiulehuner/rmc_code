@@ -27,8 +27,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     const mwSize *dims;
     int n, d2;
     int c=0;
-    const int verbose=0;
-  
+    const int verbose=1;
     //figure out dimensions vectors should be 1xn vextors
     dims = mxGetDimensions(prhs[0]);
     n = (int)dims[1];
@@ -48,7 +47,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     eps = mxGetPr(prhs[1]);
     Jcol = mxGetPr(prhs[2]);
     z = mxGetPr(plhs[0]);
-
+    mexPrintf("eps: n");
     if (verbose==2){
         mexPrintf("y: ");
         print_const_size_array(y, n);

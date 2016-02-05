@@ -22,7 +22,7 @@ rinit=10;
 eps=zeros(d2,1);
 for j=1:length(Jcol)-1
     ind = Jcol(j)+1:Jcol(j+1);
-    eps(j) = max(1e-10,min(diff(YOmega(ind))));
+    eps(j) = max(1e-5,min(diff(YOmega(ind))));
 end
 %eps=max(eps,1e-10)*ones(d2,1);
 Yrt=YOmega;
@@ -31,7 +31,6 @@ X.U=zeros(d1,rinit);X.V=zeros(d2,rinit);
 XOmega=Amap(X);
 spZ=ATmap((Yrt-XOmega)/2);
 Xold=XOmega;
-
 par.continuation=0.5;mu0=mu0/par.continuation;
 ch=0; res=0; mu=mu0;
 for j=0:0

@@ -34,7 +34,7 @@ Xold=XOmega;
 
 par.continuation=0.5;mu0=mu0/par.continuation;
 ch=0; res=0; mu=mu0;
-for j=0:5
+for j=0:0
     if res<par.tol && ch<par.tol
         mu=par.continuation*mu;    
         if ismember('mutarget', fieldnames(par))
@@ -47,7 +47,7 @@ for j=0:5
 for iter=1:par.maxiter
     %% UPDATE                  
     sv=NNP_LR_SP(mu,min(sv,par.maxrank));
-
+    XOmega=Amap(X);
     Yrt=c_colMR_fixed_margin(((Yrt+XOmega)/2)',eps',Jcol); Yrt=Yrt';  
     XOmega=Amap(X);
     spZ=ATmap((Yrt-XOmega)/2);     
@@ -58,7 +58,7 @@ for iter=1:par.maxiter
     Xold=XOmega;
     if par.verbose
         fprintf('\titer:%d,sv:%d,res:%f/%0.2g,ch:%f,muY:%f\n',...
-            iter,sv,res,norm(spZ,'fro'),ch,sum(svd(X.U*X.V'+full(spZ))))            
+            iter,sv,res,norm(spZ,'fro'),ch,sum(svd(X.U*X.V')))            
     end  
 
     if (res<par.tol || ch<par.tol)

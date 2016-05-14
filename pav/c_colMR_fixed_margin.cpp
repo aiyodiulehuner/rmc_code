@@ -28,8 +28,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     int n, d2;
     int c=0;
     const int verbose=0;
-    
-    
   
     //figure out dimensions vectors should be 1xn vextors
     dims = mxGetDimensions(prhs[0]);
@@ -44,38 +42,40 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     plhs[0] = mxCreateDoubleMatrix(1,n,mxREAL);
     if (verbose>=1){
         mexPrintf("In\n");
-        mexPrintf("%d %d\n", n, d2);
+        mexPrintf("%d %d %d\n", n, d2, dims[0]);
     }
     y = mxGetPr(prhs[0]);
     eps = mxGetPr(prhs[1]);
     Jcol = mxGetPr(prhs[2]);
     z = mxGetPr(plhs[0]);
-   
+
     if (verbose==2){
         mexPrintf("y: ");
         print_const_size_array(y, n);
         mexPrintf("eps: n");
         print_const_size_array(eps, d2);
     }
-    double v[n]; 
-    double w[n]; 
+    
     
     for(int j=0; j<d2; j++){
+        
         int js=(int) Jcol[j];
         int nj=(int)Jcol[j+1]-js;           
-        double norm_d_sq=nj*(nj*nj-1)/12.0;  
+        double v[nj]; 
+        double w[nj]; 
         
         for(int i=0; i<nj; i++)
             if (c)
-                v[js+i] = eps[js+i];
+                v[i] = eps[js+i];
             else
-                v[js+i] = eps[j]*(-(nj-1)/2.0+i);
-        
+                v[i] = eps[j]*(-(nj-1)/2.0+i);        
         double temp[nj];        
-        vec_sub(&y[js], &v[js], nj, temp);
-        pav_double(temp, nj, &w[js]);
+        vec_sub(&y[js], v, nj, temp);
+        pav_double(temp, nj, w);
+        vec_add(w, v, nj, &z[js]);
     }
-  
+   
+   /*
     if (verbose==2){
         mexPrintf("w: ");
         print_const_size_array(w, n);
@@ -85,8 +85,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         mexPrintf("eps * v: ");
         print_const_size_array(v, n);
     }
-    double temp[n];
-    vec_add(w, v, n, z);
+    
     if (verbose==2){
         mexPrintf("w + eps * v: ");
         print_const_size_array(z, n);

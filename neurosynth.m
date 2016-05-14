@@ -7,7 +7,7 @@ clear global
 Y=importdata('../neurosynth_counts/count_matrix.csv')';
 [d1,d2]=size(Y);
 %parameters
-par.tol     = 1e-5;
+par.tol     = 1e-3;
 par.maxiter = 1000;
 par.maxrank = 200;%min([d1,d2,500]);
 par.verbose = 1;
@@ -15,7 +15,7 @@ par.nnp=1;
 f={'spearman_rho', 'kendall_tau', 'NDCG'};
 
 niter=1;
-muiter=[500,1000,1e4,5e4];
+muiter=[50,100,500,1000];
 probiter=0.2:0.2:0.8;    
 %probiter=[0.4];
 resultSMC=zeros(niter,length(probiter), length(muiter), length(f));
@@ -36,11 +36,11 @@ for i=1:length(niter)
 
         for m=1:length(muiter)
             mu=mu0*muiter(m);
-            %[Ysmc,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par);            
-            %k=evalRanking(Y,Ysmc.U*Ysmc.V',f);
-            %fprintf('\t SMC mu:%f. iter:%d, res:%f, ||X||_*:%f, ktau:%f, srho:%f, ndcg:%f\n',...
-            %    mu, iter,res,sum(sum(Ysmc.U.^2)),k(1),k(2),k(3));
-            %resultSMC(i,pi,m,:)= k;      
+%              [Ysmc,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par);            
+%              k=evalRanking(Y,Ysmc.U*Ysmc.V',f);
+%              fprintf('\t SMC mu:%f. iter:%d, res:%f, ||X||_*:%f, ktau:%f, srho:%f, ndcg:%f\n',...
+%                  mu, iter,res,sum(sum(Ysmc.U.^2)),k(1),k(2),k(3));
+%              resultSMC(i,pi,m,:)= k;      
             [Yrmc,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu,par);
             k=evalRanking(Y,Yrmc.U*Yrmc.V',f);
             fprintf('\t RMC mu:%f. iter:%d, res:%f, ||X||_*:%f, ktau:%f, srho:%f, ndcg:%f\n',...
@@ -50,6 +50,7 @@ for i=1:length(niter)
 
     end          
 end    
+load('resultSMC')
 resultbestSMC=zeros(niter, length(probiter),length(f));
 for i=1:niter
     for pi=1:length(probiter)
@@ -64,6 +65,7 @@ for i=1:niter
     for pi=1:length(probiter)
         temp=squeeze(resultRMC(i,pi,:,:));
         [k,m]=max(temp);
+        m
         %k(3)=k(3)^2;
         resultbestRMC(i,pi,:)= k;
     end

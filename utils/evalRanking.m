@@ -5,11 +5,11 @@ function k=evalRanking(Xtrue,Yest,f)
 axis=2;
 assert(all(size(Xtrue)==size(Yest)))
 k=zeros(length(f),1);
-for j=1:length(f)
-    if ischar(f{j})
-        f{j}=str2func(f{j});
-    end
-    for i=1:size(Xtrue,axis)
+for i=1:size(Xtrue,axis)
+    for j=1:length(f)
+        if ischar(f{j})
+            f{j}=str2func(f{j});
+        end    
         k(j) = k(j) + f{j}(Xtrue(:,i),Yest(:,i));
     end
 end

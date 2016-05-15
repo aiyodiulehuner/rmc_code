@@ -1,20 +1,27 @@
-function [sv,svp]=SVT_LR_SP(th,sv)
+function sv=SVT_LR_SP(th,sv,par)
 % Computes SVT of global matrix X+spZ by threhold th
 
 global X spZ
 [d1,d2]=size(spZ);
 
-[U,S,V]=lansvd('Axz','Atxz',d1,d2,sv,'L');
-diagS = diag(S);
-diagS = diagS(1:sv);svn = length(find(diagS > th));
-diagS = diagS(1:max(svn,1));
-svp = max(svn,1);
-if svp < sv 
-    sv = min(svp + 1, d2);
-else
-    sv = min(svp+10, d2);
+while (1)
+    [U,S,V]=lansvd('Axz','Atxz',d1,d2,sv,'L');
+    diagS = diag(S);
+    diagS = diagS(1:sv);svn = length(find(diagS > th));
+    diagS = diagS(1:max(svn,1));
+    svp = max(svn,1);
+    if svp==par.maxrank
+        break
+    end
+    if svp < sv
+        sv = min(svp + 1, par.maxrank);
+        break
+    else
+        sv = min(svp+50, par.maxrank);
+    end
+    
 end
-sqrtds = sqrt(max(0,diagS(1:svp) - th));    
+sqrtds = sqrt(max(0,diagS(1:svp) - th));
 X.U = U(:, 1:svp) * diag(sqrtds);
 X.V = V(:, 1:svp) * diag(sqrtds);
 

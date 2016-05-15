@@ -5,6 +5,7 @@ global X spZ
 [d1,d2]=size(spZ);
 
 [X.U,S,X.V]=lansvd('Axz','Atxz',d1,d2,sv,'L');
+
 diagS = diag(S);
 svp = max(length(find(diagS>1e-15)),1);
 diagS = diagS(1:svp);

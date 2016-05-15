@@ -81,23 +81,19 @@ for j=1:continuation_steps
             Yrt=c_colMR_fixed_margin(((Yrt+XOmega)/2)',eps',Jcol); Yrt=Yrt'; 
             spZ=ATmap((Yrt-XOmega)/2,ii);     
         else
-            sv=SVT_LR_SP(mu,sv,par);      
-            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));      
-            
-            ch=norm(Amap(X,ii)-Xold)/sqrt(n);
-            Xold=Amap(X,ii);
-            
+            sv=SVT_LR_SP(mu,min(sv,par.maxrank));      
+            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));
+            ch=norm(Amap(X,ii)-;
             Yrt_temp=(Yrt+XOmega)/2;            
             [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol); Yrt=Yrt';  
-            
-            XOmega=Amap(X,ii); 
+            XOmega=Amap(X,ii); % for x old to be in same scale
             spZ=ATmap((Yrt-XOmega)/2,ii);                       
         end  
         %% EXIT CONDITIONS
         res=norm(Yrt-XOmega);   
-        %ch=norm(Xold-XOmega)/sqrt(length(XOmega));
-        %Xold=XOmega;
+        ch=norm(Xold-XOmega)/sqrt(length(XOmega));
+        Xold=XOmega;
         if par.verbose
             fprintf('\titer:%d,sv:%d,res:%f/%0.2g,ch:%f,muY:%f\n',...
                 iter,sv,res,norm(spZ,'fro'),ch,sum(svd(X.U*X.V')))            

@@ -4,7 +4,7 @@
 function [yys,iis,Jcol]=processInput(ii,jj,yy)
     assert(length(ii)==length(yy));assert(issorted(jj));
     Jcol=compJcol(jj); %csc sparse format ii is indices, jcol is indptr
-    iis=ii;yys=yy;
+    iis=zeros(size(ii));yys=zeros(size(yy));
     for j=1:(length(Jcol)-1)
         Yj=yy(Jcol(j)+1:Jcol(j+1));
         [y,IX]=sort(Yj,'ascend');

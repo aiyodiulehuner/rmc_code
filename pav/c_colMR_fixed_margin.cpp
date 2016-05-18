@@ -16,12 +16,9 @@ extern "C" {
     void pav_double(double *in_array, size_t size, double *out_array) {
         pav::pav<std::less_equal, std::allocator>(in_array, in_array + size, out_array);
     }
-    
 }
 
-
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-        
     double *y, *eps, *z, *Jcol;//, *ii_in, *ii_out;
     
     const mwSize *dims;
@@ -30,18 +27,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     const int verbose=1;
     //figure out dimensions vectors should be 1xn vextors
     dims = mxGetDimensions(prhs[0]);
-    n = (int)dims[1];
+    n = (int) dims[1];
     dims = mxGetDimensions(prhs[1]);
-    if ((int)dims[1]==n)
+    if ((int) dims[1]==n)
         c=1;
     dims = mxGetDimensions(prhs[2]);
-    d2 = (int)dims[1]-1;
+    d2 = (int) dims[1]-1;
     //mexPrintf("%d,%d,%d\n", n,d2,c);
     //associate outputs
     plhs[0] = mxCreateDoubleMatrix(1,n,mxREAL);
     if (verbose>=1){       
         mexPrintf("\t\t PAV: %d %d %d. ", n, d2, dims[0]);
     }
+
     y = mxGetPr(prhs[0]);
     eps = mxGetPr(prhs[1]);
     Jcol = mxGetPr(prhs[2]);
@@ -55,11 +53,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         print_const_size_array(eps, d2);
     }
     
-    
     for(int j=0; j<d2; j++){
-        
         int js=(int) Jcol[j];
-        int nj=(int)Jcol[j+1]-js;                    
+        int nj=(int) Jcol[j+1]-js;                    
         double w[nj]; 
         double temp[nj];         
 
@@ -75,10 +71,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             pav_double(temp, nj, w);
             vec_add(w, &eps[js], nj, &z[js]);
         }
+//        mxDestroyArray(w);
+//        mxDestroyArray(temp);
     }
-    double temp[n];
-    vec_sub(y,z,n,temp);
-    mexPrintf("ch=%f\n",dotproduct(temp,temp,n));
-
+//    double temp[n];
+//    vec_sub(y,z,n,temp);
+//    mexPrintf("ch=%f\n",dotproduct(temp,temp,n));
+    mexPrintf("\n");
     return;        
 }

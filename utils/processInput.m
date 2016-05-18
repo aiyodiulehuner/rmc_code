@@ -12,3 +12,4 @@ function [yys,iis,Jcol]=processInput(ii,jj,yy)
         iis(Jcol(j)+1:Jcol(j+1))=Ij(IX);
         yys(Jcol(j)+1:Jcol(j+1))=y;
     end
+    Jcol=Jcol';

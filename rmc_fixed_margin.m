@@ -1,7 +1,7 @@
 %% X = RMC_exact_fixed_margin(ii,jj,Jcol,YOmega,eps,d1,d2)
 % min ||X||_* st DX_j<= -eps_j 
 % [Xest,spZest,stat]
-function [Yest,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par)
+function [Yest,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par)
 
 Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol);  
 if (length(YOmega)/(d1*d2)>0.6)
@@ -38,33 +38,37 @@ for j=1:length(Jcol)-1
     
     %create blks
     f= find(eps_temp==0);
-    sid=f(1);
-    for i=2:length(f)
-        if f(i)==f(i-1)+1
-            continue
-        else
-            eid=f(i-1)+1;
-            blk{length(blk)+1}=[ind(sid),ind(eid)];
-            sid=f(i);
+    if ~isempty(f)
+        sid=f(1);
+        for i=2:length(f)
+            if f(i)==f(i-1)+1
+                continue
+            else
+                eid=f(i-1)+1;
+                blk{length(blk)+1}=[ind(sid),ind(eid)];
+                sid=f(i);
+            end
         end
+        eid=f(i)+1;
+        blk{length(blk)+1}=[ind(sid),ind(eid)];
     end
-    eid=f(i)+1;
-    blk{length(blk)+1}=[ind(sid),ind(eid)];
 end
-    
-    
-    
+fprintf('len(blk):%d\n',length(blk))
 
 Yrt=YOmega;
 X.U=zeros(d1,rinit);X.V=zeros(d2,rinit); 
 XOmega=Amap(X,ii);
 spZ=ATmap((Yrt-XOmega)/2,ii);
 Xold=XOmega;
-continuation_steps=1;
+if mu0<2000 
+    continuation_steps=4;
+else
+    continuation_steps=1;
+end
 par.continuation=0.5;mu0=mu0/((par.continuation)^continuation_steps);
 ch=0; res=0; mu=mu0;
 for j=1:continuation_steps
-    if res<par.tol && ch<par.tol
+    if res<par.tol || ch<par.tol
         mu=par.continuation*mu;    
         if ismember('mutarget', fieldnames(par))
             if mu<par.mutarget; mu=par.mutarget; end
@@ -76,9 +80,18 @@ for j=1:continuation_steps
     for iter=1:par.maxiter
         %% UPDATE 
         if par.nnp
-            sv=NNP_LR_SP(mu,min(sv,par.maxrank));
+            sv=NNP_LR_SP(mu,sv,par);
+            fprintf('\t\tNNP: sv:%d, mu:%f\n',sv,mu)
+            
+            ch=norm(Amap(X,ii)-Xold)/sqrt(n);
+            Xold=Amap(X,ii);
+            
+            Yrt_temp=(Yrt+XOmega)/2;            
+            [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
+ 
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol); Yrt=Yrt'; 
+            
             XOmega=Amap(X,ii);
-            Yrt=c_colMR_fixed_margin(((Yrt+XOmega)/2)',eps',Jcol); Yrt=Yrt'; 
             spZ=ATmap((Yrt-XOmega)/2,ii);     
         else
             sv=SVT_LR_SP(mu,sv,par);      
@@ -89,6 +102,7 @@ for j=1:continuation_steps
             
             Yrt_temp=(Yrt+XOmega)/2;            
             [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
+            
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol); Yrt=Yrt';  
             
             XOmega=Amap(X,ii); 
@@ -99,8 +113,8 @@ for j=1:continuation_steps
         %ch=norm(Xold-XOmega)/sqrt(length(XOmega));
         %Xold=XOmega;
         if par.verbose
-            fprintf('\titer:%d,sv:%d,res:%f/%0.2g,ch:%f,muY:%f\n',...
-                iter,sv,res,norm(spZ,'fro'),ch,sum(svd(X.U*X.V')))            
+            fprintf('\titer:%d,sv:%d,res:%f/%f,ch:%f,muY:%f\n',...
+                iter,sv,res,2.0*norm(spZ,'fro'),ch,sum(sum(X.U.^2)))            
         end  
 
         if (res<par.tol || ch<par.tol)

@@ -11,7 +11,7 @@ function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par)
     end    
     
     global X spZ
-    sv=50;
+    sv=100;
     
     X.U=zeros(d1,10);X.V=zeros(d2,10);
     XOmega=zeros(size(YOmega));
@@ -20,17 +20,20 @@ function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par)
     for iter=1:par.maxiter
         %disp(sv)
         %disp(min(sv,par.maxrank))
-        if (ismember('nnp',fieldnames(par)) && par.nnp==1)
-            sv=NNP_LR_SP(mu,min(sv,par.maxrank));
-        else
-            sv=SVT_LR_SP(mu,min(sv,par.maxrank));
+        if (ismember('nnp',fieldnames(par)) && par.nnp==1)           
+            sv=NNP_LR_SP(mu,sv,par);
+            fprintf('\t\tNNP: sv:%d, mu:%f\n',sv,mu)
+        else            
+            sv=SVT_LR_SP(mu,sv,par);
+            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));   
         end
         
         XOmega=Amap(X);
         res=norm(XOmega-YOmega);
         ch=norm(XOld-XOmega)/length(XOmega);
         if par.verbose
-            fprintf('iter:%d,res:%2g,ch=%f,sv:%d, mu:%f/%f\n',iter,res,ch,sv,mu,sum(sum(X.U.^2)))
+            fprintf('\titer:%d,sv:%d,res:%f/%f,ch:%f,muY:%f\n',...
+                iter,sv,res,2.0*norm(spZ,'fro'),ch,sum(sum(X.U.^2)))              
         end
         if ch<par.tol || res<par.tol 
             break

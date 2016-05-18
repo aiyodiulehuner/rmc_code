@@ -17,7 +17,8 @@ while (1)
         sv = min(svp + 1, par.maxrank);
         break
     else
-        sv = min(svp+50, par.maxrank);
+        %sv
+        sv = min(2*svp, par.maxrank);
     end
     
 end

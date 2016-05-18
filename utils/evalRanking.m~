@@ -29,8 +29,8 @@ function rho=spearman_rho(x,y)
         y=y';
     end
     if (sum(abs(x))==0)
-        disp('zero x')
-    end    
+        
+        
     rho = corr(x,y,'type','Spearman');
 end
 

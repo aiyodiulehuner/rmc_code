@@ -69,7 +69,7 @@ for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
         load(sprintf('../neurosynth_counts/folds/neurosynth_%d.mat',round(p*100)));
-        par.maxrank = min(d1,d2);
+        par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
         %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test

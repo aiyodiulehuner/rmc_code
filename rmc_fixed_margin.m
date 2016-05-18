@@ -15,7 +15,7 @@ else
 end
 
 %% Initialize Variables
-sv=20; 
+sv=1000; 
 
 global X spZ
 rinit=10;
@@ -49,6 +49,7 @@ for j=1:length(Jcol)-1
                 sid=f(i);
             end
         end
+        i=length(f)
         eid=f(i)+1;
         blk{length(blk)+1}=[ind(sid),ind(eid)];
     end
@@ -68,14 +69,7 @@ end
 par.continuation=0.5;mu0=mu0/((par.continuation)^continuation_steps);
 ch=0; res=0; mu=mu0;
 for j=1:continuation_steps
-    if res<par.tol || ch<par.tol
-        mu=par.continuation*mu;    
-        if ismember('mutarget', fieldnames(par))
-            if mu<par.mutarget; mu=par.mutarget; end
-        end
-    else
-        mu=sum(svd(X.U*X.V'+full(spZ))); par.continuation=1; 
-    end
+    mu=par.continuation*mu;    
     
     for iter=1:par.maxiter
         %% UPDATE 
@@ -83,7 +77,7 @@ for j=1:continuation_steps
             sv=NNP_LR_SP(mu,sv,par);
             fprintf('\t\tNNP: sv:%d, mu:%f\n',sv,mu)
             
-            ch=norm(Amap(X,ii)-Xold)/sqrt(n);
+            ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
             
             Yrt_temp=(Yrt+XOmega)/2;            
@@ -97,7 +91,7 @@ for j=1:continuation_steps
             sv=SVT_LR_SP(mu,sv,par);      
             fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));      
             
-            ch=norm(Amap(X,ii)-Xold)/sqrt(n);
+            ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
             
             Yrt_temp=(Yrt+XOmega)/2;            
@@ -117,13 +111,10 @@ for j=1:continuation_steps
                 iter,sv,res,2.0*norm(spZ,'fro'),ch,sum(sum(X.U.^2)))            
         end  
 
-        if (res<par.tol || ch<par.tol)
+        if (res<par.tol || ch<par.tol^2)
             break
         end                
     end
-    if (par.continuation>=1)
-         break
-    end  
 end
 Yest=X;
 

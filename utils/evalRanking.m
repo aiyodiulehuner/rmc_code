@@ -16,6 +16,26 @@ end
 k=k/d2;
 end
 
+function prec_k=Precision(x,y)
+   th=0.5;
+   K=20;
+   xth=(x>th);
+   [yy,ii]=sort(y,'descend');
+   l=xth(ii);
+   r=(1:length(yy))';
+   all_prec=cumsum(l)./r;
+   if K<length(x)
+      prec_k=all_prec(K);
+   else
+      prec_k=all_prec(end);
+   end
+end
+
+
+function mse=MSE(x,y)
+   mse=norm(x-y)^2/length(x);
+end
+
 %y is score and x is ground truth
 function rho=spearman_rho(x,y)
     %xrank=tiedrank(x,0);
@@ -55,7 +75,7 @@ end
 
 function ndcg_k=NDCG(x,y)
 %x.y need to be columns
-    K=50;
+    K=20;
     if size(x,2)>1
         x=x';
     end

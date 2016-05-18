@@ -6,14 +6,14 @@ addpath('NNLS-0/PROPACKmod/');
 clear global
 
 %parameters
-par.tol     = 1e-3;
+par.tol     = 1e-2;
 par.maxiter = 1000;
 par.verbose = 1;
-f={'spearman_rho', 'kendall_tau', 'NDCG'};
+f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 niter=1;
 
 par.maxrank=1000;
-probiter=0.8;%:0.2:0.8;
+probiter=[0.8];%:0.2:0.8;
 par.nnp = 1;
 RMC=0;
 SMC=1;
@@ -62,7 +62,7 @@ end
 end
 
 if SMC
-muiter=[250,500,1000,1e4,5e4];  
+muiter=[5e4,1e4,5000,1000,500,250,100,50];  
 resultSMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
@@ -74,12 +74,13 @@ for i=1:length(niter)
             length(yy),length(yy_val),length(yy_test));
         %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test
         ii_train=ii;         
+        Ysmc.U=zeros(d1,10);Ysmc.V=zeros(d2,10)
         for m=1:length(muiter)           
             mu=mu0*muiter(m);
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Ysmc,iter,res]=smc(ii,Jcol,jj,yy,d1,d2,mu,par);            
+            [Ysmc,iter,res]=smc(ii,Jcol,jj,yy,d1,d2,mu,par,Ysmc);            
             t=toc;
             yest=Amap_MatComp(Ysmc,ii_train,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f);            

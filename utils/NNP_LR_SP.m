@@ -9,7 +9,6 @@ while (1)
     diagS = diag(S);
     svp = max(length(find(diagS > 1e-15)),1);
     diagS = diagS(1:svp);
-    sv
     if svp==par.maxrank
         break
     end    
@@ -23,6 +22,6 @@ while (1)
 end
 diagS = ProjectOntoL1Ball(diagS, mu,2);
 svp=max(length(find(diagS > 1e-15)),1);
-sv=svp;
+%sv=svp;
 X.U = U(:, 1:svp) * diag(sqrt(diagS(1:svp)));
 X.V = V(:, 1:svp) * diag(sqrt(diagS(1:svp)));

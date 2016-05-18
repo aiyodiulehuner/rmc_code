@@ -6,7 +6,7 @@ addpath('NNLS-0/PROPACKmod/');
 clear global
 
 %parameters
-par.tol     = 1e-2;
+par.tol     = 1e-3;
 par.maxiter = 1000;
 par.verbose = 1;
 f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
@@ -19,7 +19,7 @@ RMC=1;
 SMC=0;
 
 if (RMC)
-muiter=[250,500,1000,1e4,5e4];    
+muiter=[5e4,1e4,5000,1000,500,250,100,50];
 resultRMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
@@ -30,13 +30,14 @@ for i=1:length(niter)
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
         %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test
-        ii_train=ii;         
+        ii_train=ii;
+        Yrmc.U=zeros(d1,10);Yrmc.V=zeros(d2,10);
         for m=1:length(muiter)           
             mu=mu0*muiter(m);
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par);            
+            [Yrmc,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc); 
             t=toc;
             yest=Amap_MatComp(Yrmc,ii_train,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f);            

@@ -1,7 +1,7 @@
 %% X = RMC_exact_fixed_margin(ii,jj,Jcol,YOmega,eps,d1,d2)
 % min ||X||_* st DX_j<= -eps_j 
 % [Xest,spZest,stat]
-function [Yest,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par)
+function [Yest,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit)
 
 Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol);  
 if (length(YOmega)/(d1*d2)>0.6)
@@ -15,19 +15,18 @@ else
 end
 
 %% Initialize Variables
-sv=1000; 
+sv=3169; 
 
 global X spZ
 rinit=10;
-%eps=zeros(d2,1);
-%for j=1:length(Jcol)-1
-%    ind = Jcol(j)+1:Jcol(j+1);
-%    eps(j) = max(1e-5,min(diff(YOmega(ind))));
-%end
-%eps=(1/d2)*ones(d2,1);
+eps=zeros(d2,1);
+for j=1:length(Jcol)-1
+    ind = Jcol(j)+1:Jcol(j+1);
+    eps(j) = max(1e-5,min(diff(YOmega(ind))));
+end
 n=length(YOmega);
 %compute epsilon
-eps0=(1/d1);
+eps0=min(eps);
 eps=ones(n,1);
 blk={};
 for j=1:length(Jcol)-1
@@ -45,26 +44,27 @@ for j=1:length(Jcol)-1
                 continue
             else
                 eid=f(i-1)+1;
-                if length(blk)==978
-                    [ind(sid),ind(eid)]
+                if (eid-sid)>1
+	            blk{length(blk)+1}=[ind(sid),ind(eid)];
                 end
-                blk{length(blk)+1}=[ind(sid),ind(eid)];
                 sid=f(i);
             end
         end
         i=length(f);
         eid=f(i)+1;
-        blk{length(blk)+1}=[ind(sid),ind(eid)];
+        if (eid-sid)>1
+           blk{length(blk)+1}=[ind(sid),ind(eid)];
+        end
     end
 end
 fprintf('len(blk):%d\n',length(blk))
 
 Yrt=YOmega;
-X.U=zeros(d1,rinit);X.V=zeros(d2,rinit); 
+X.U=Xinit.U;X.V=Xinit.V;
 XOmega=Amap(X,ii);
 spZ=ATmap((Yrt-XOmega)/2,ii);
 Xold=XOmega;
-if mu0<2000 
+if mu0<0 
     continuation_steps=4;
 else
     continuation_steps=1;

@@ -45,11 +45,14 @@ for j=1:length(Jcol)-1
                 continue
             else
                 eid=f(i-1)+1;
+                if length(blk)==978
+                    [ind(sid),ind(eid)]
+                end
                 blk{length(blk)+1}=[ind(sid),ind(eid)];
                 sid=f(i);
             end
         end
-        i=length(f)
+        i=length(f);
         eid=f(i)+1;
         blk{length(blk)+1}=[ind(sid),ind(eid)];
     end

@@ -15,8 +15,8 @@ niter=1;
 par.maxrank=1000;
 probiter=[0.8];%:0.2:0.8;
 par.nnp = 1;
-RMC=0;
-SMC=1;
+RMC=1;
+SMC=0;
 
 if (RMC)
 muiter=[250,500,1000,1e4,5e4];    

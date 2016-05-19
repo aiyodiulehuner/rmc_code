@@ -1,7 +1,7 @@
 %% X = RMC_exact_fixed_margin(ii,jj,Jcol,YOmega,eps,d1,d2)
 % min ||X||_* st DX_j<= -eps_j 
 % [Xest,spZest,stat]
-function [Yest,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit)
+function [Yest,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit)
 
 Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol);  
 if (length(YOmega)/(d1*d2)>0.6)
@@ -73,7 +73,7 @@ else
     continuation_steps=1;
 end
 par.continuation=0.5;mu0=mu0/((par.continuation)^continuation_steps);
-ch=0; res=0; mu=mu0;
+res=0; mu=mu0;
 for j=1:continuation_steps
     mu=par.continuation*mu;    
     
@@ -81,16 +81,13 @@ for j=1:continuation_steps
         %% UPDATE 
         if par.nnp
             sv=NNP_LR_SP(mu,sv,par);
-            fprintf('\t\tNNP: sv:%d, mu:%f\n',sv,mu)
-            
             ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
+            fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,ch)                        
             
             Yrt_temp=(Yrt+XOmega)/2;            
             [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
- 
-            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt'; 
-            
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';             
             XOmega=Amap(X,ii);
             spZ=ATmap((Yrt-XOmega)/2,ii);     
         else

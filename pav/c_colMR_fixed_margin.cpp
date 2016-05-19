@@ -52,7 +52,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         mexPrintf("eps: \n");
         print_const_size_array(eps, d2);
     }
-    
+    double change=0; 
     for(int j=0; j<d2; j++){
         int js=(int) Jcol[j];
         int nj=(int) Jcol[j+1]-js;                    
@@ -67,9 +67,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
                 pav_double(temp, nj, w);
                 vec_add(w, v, nj, &z[js]);}
         else{
-            vec_sub(&y[js], &eps[js], nj, temp);
-            pav_double(temp, nj, w);
+            vec_sub(&y[js], &eps[js], nj, temp);          
+            pav_double(temp, nj, w);            
             vec_add(w, &eps[js], nj, &z[js]);
+            vec_sub(&y[js],&z[js],nj,temp);
+            change+=dotproduct(temp,temp,nj);
         }
 //        mxDestroyArray(w);
 //        mxDestroyArray(temp);
@@ -77,6 +79,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 //    double temp[n];
 //    vec_sub(y,z,n,temp);
 //    mexPrintf("ch=%f\n",dotproduct(temp,temp,n));
-    mexPrintf("\n");
+    mexPrintf(" Ych=%f\n",change);
     return;        
 }

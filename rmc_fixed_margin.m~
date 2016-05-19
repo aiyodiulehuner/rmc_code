@@ -104,7 +104,7 @@ for j=1:continuation_steps
             if ~isempty(blk)
                 [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
             end
-            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';  
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol); Yrt=Yrt';  
             
             XOmega=Amap(X,ii); Y
             spZ=ATmap((Yrt-XOmega)/2,ii);                       

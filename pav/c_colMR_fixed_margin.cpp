@@ -37,7 +37,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     //associate outputs
     plhs[0] = mxCreateDoubleMatrix(1,n,mxREAL);
     if (verbose>=1){       
-        mexPrintf("\t\t PAV: %d %d %d. ", n, d2, dims[0]);
+        mexPrintf("\t\t PAV: n=%d d2=%d 1=%d c=%d. ", n, d2, dims[0],c);
     }
 
     y = mxGetPr(prhs[0]);

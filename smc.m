@@ -11,7 +11,7 @@ function [Yest,iter,res]=smc(ii,Jcol,jj,YOmega,d1,d2,mu,par,Xinit)
     end    
     
     global X spZ
-    sv=1000;
+    sv=par.maxrank;
     
     X.U=Xinit.U;X.V=Xinit.V;
     XOmega=zeros(size(YOmega));

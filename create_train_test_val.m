@@ -24,7 +24,7 @@ for pi=1:length(probiter)
         
         [ii_test,jj_test]= find((Omega>p_val) & (Omega <= p_test));
         yy_test=Y((Omega>p_val) & (Omega <= p_test));
-        [yy_test,ii_test,Jcol_test]=processInput(ii_test,jj_test,yy_test);
+        [yy_test,ii_test,Jcol_test] = processInput(ii_test,jj_test,yy_test);
         fprintf('\tTest: %d, %d\n', length(Jcol_test)-1,length(yy_test))
         
         

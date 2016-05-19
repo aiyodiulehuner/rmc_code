@@ -1,2 +1,5 @@
-yrmc*.mat
-ysmc*.mat
+*yrmc*.mat
+*ysmc*.mat
+results/yrmc*.mat
+results/ysmc*.mat
+cofirank*

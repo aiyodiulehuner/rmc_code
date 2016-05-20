@@ -28,7 +28,7 @@ rinit=10;
 
 n=length(YOmega);
 %compute epsilon
-eps0=1e-2;
+eps0=1e-3;
 eps=zeros(n,1);
 blk={};
 

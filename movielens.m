@@ -7,7 +7,7 @@ clear global
 
 %parameters
 par.tol     = 1e-3;
-par.maxiter = 1000;
+par.maxiter = 50;
 par.verbose = 1;
 f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 niter=1;
@@ -15,8 +15,8 @@ niter=1;
 par.maxrank=1000;
 cviter=1;
 par.nnp = 1;
-RMC=0;
-SMC=1;
+RMC=1;
+SMC=0;
 K=5;
 th=3;
 if (RMC)
@@ -31,15 +31,17 @@ for i=1:length(niter)
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...
             length(yy),length(yy_val),length(yy_test));
         %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test
-        ii_train=ii;         
+        ii_train=ii;
+        Yrmc.U=zeros(d1,10);Yrmc.V=zeros(d2,10);
+        Yrt=yy;
         for m=1:length(muiter)           
             mu=mu0*muiter(m);
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par);            
+            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,Yrt); 
             t=toc;
-            yest=Amap_MatComp(Yrmc,ii_train,Jcol);            
+            yest=Amap_MatComp(Yrmc,ii,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f,K,th);            
             resultRMC(i,ci,m,1,:)=k1;
             

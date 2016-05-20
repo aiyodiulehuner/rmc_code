@@ -68,6 +68,7 @@ if SMC
 muiter=[5e4,2.8e4,1e4,5000,1000,500,100,50];
 resultSMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
+
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);

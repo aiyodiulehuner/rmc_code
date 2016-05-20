@@ -40,7 +40,7 @@ for j=1:length(Jcol)-1
     eps(ind)=[0;cumsum(eps_temp)];
     eps(ind)=eps(ind)-max(eps(ind))/2.0;
     %create blks
-    f= find(eps_temp(1:end)==0);
+    f= find(eps_temp==0);
     if ~isempty(f)
         sid=f(1);
         for i=2:length(f)

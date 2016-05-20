@@ -12,7 +12,7 @@ par.verbose = 1;
 f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 niter=1;
 
-par.maxrank=1000;
+par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
 RMC=1;
@@ -20,7 +20,7 @@ SMC=0;
 K=10;
 th=0.5;
 if (RMC)
-muiter=[5e4,1e4,8700,5000];
+muiter=[1e4,5000,500,250,100,50,10];
 resultRMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
@@ -39,7 +39,7 @@ for i=1:length(niter)
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,Yrt); 
+            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin_AM(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,Yrt); 
             t=toc;
             yest=Amap_MatComp(Yrmc,ii,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f,K,th);            

@@ -28,7 +28,7 @@ rinit=10;
 
 n=length(YOmega);
 %compute epsilon
-eps0=1e-3;
+eps0=1e-2;
 eps=zeros(n,1);
 blk={};
 
@@ -36,7 +36,7 @@ for j=1:length(Jcol)-1
     ind = Jcol(j)+1:Jcol(j+1);
     Yj=diff(YOmega(ind));%diff(y)=y(i)-y(i+1)
 
-    eps_temp=eps0*(Yj>=1e-5);%>1e-5);
+    eps_temp=eps0*(Yj>=1e-5);
     eps(ind)=[0;cumsum(eps_temp)];
     eps(ind)=eps(ind)-max(eps(ind))/2.0;
     %create blks
@@ -66,7 +66,7 @@ fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
 Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;
 XOmega=Amap(X,ii);
-spZ=ATmap((Yrt-XOmega)/2,ii);
+spZ=ATmap((Yrt-XOmega),ii);
 Xold=XOmega;
 Yold=Yrt;
 if mu0<0 
@@ -85,21 +85,20 @@ for j=1:continuation_steps
         if par.nnp
             sv=NNP_LR_SP(mu,sv,par);
             chX=norm(Amap(X,ii)-Xold)^2/n;
-            Xold=Amap(X,ii);
+            XOmega=Amap(X,ii);
             fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)                        
             
-            Yrt_temp=(Yrt+XOmega)/2;            
+            Yrt_temp=XOmega;
             if ~isempty(blk)
                 [Yrt_temp,ii,idx]=block_sort(Yrt_temp,ii,blk);
             end
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt'; 
             chY=norm(Yrt-Yold(idx))^2/n;
-            Yold=Yrt;
             fprintf('Ych:%f\n',chY)
             ch=max(chX,chY);
-            
-            XOmega=Amap(X,ii);
-            spZ=ATmap((Yrt-XOmega)/2,ii);     
+            spZ=ATmap((Yrt-XOmega),ii);     
+            Xold=XOmega;
+            Yold=Yrt;
         else
             sv=SVT_LR_SP(mu,sv,par);      
             fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));      

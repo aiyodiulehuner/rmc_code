@@ -26,7 +26,7 @@ mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for ci=1:length(cviter)
         cv=cviter(ci);
-        load(sprintf('../ml-100k/folds/ml_a.mat'));
+        load(sprintf('../ml-100k/folds/ml_b.mat'));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...
             length(yy),length(yy_val),length(yy_test));
@@ -57,8 +57,8 @@ for i=1:length(niter)
             
             fprintf('RMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Yrmc.U.^2)),t);
-            save('ml_resultRMC.mat','resultRMC')
-            save(sprintf('ml_yrmc_a_%d.mat',m),'Yrmc','t')
+            save('ml_resultRMCb.mat','resultRMC')
+            save(sprintf('ml_yrmc_b_%d.mat',m),'Yrmc','t')
         end
     end          
 end 

@@ -1,7 +1,7 @@
 %% X = RMC_exact_fixed_margin(ii,jj,Jcol,YOmega,eps,d1,d2)
 % min ||X||_* st DX_j<= -eps_j 
 % [Xest,spZest,stat]
-function [Yest,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit)
+function [Yest,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit,Yinit)
 
 Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol);  
 if (length(YOmega)/(d1*d2)>0.6)
@@ -28,18 +28,18 @@ rinit=10;
 
 n=length(YOmega);
 %compute epsilon
-eps0=1/d1;
-eps=ones(n,1);
+eps0=1e-5;
+eps=zeros(n,1);
 blk={};
 
 for j=1:length(Jcol)-1
     ind = Jcol(j)+1:Jcol(j+1);
     Yj=diff(YOmega(ind));%diff(y)=y(i)-y(i+1)
-    eps_temp=eps0*(Yj>1e-10);
+    eps_temp=eps0*(Yj>1e-5);
     eps(ind)=[0;cumsum(eps_temp)];
-    
+    eps(ind)=eps(ind)-max(eps(ind))/2.0;
     %create blks
-    f= find(eps_temp==0);
+    f= find(eps_temp(1:end)==0);
     if ~isempty(f)
         sid=f(1);
         for i=2:length(f)
@@ -48,7 +48,7 @@ for j=1:length(Jcol)-1
             else
                 eid=f(i-1)+1;
                 if (eid-sid)>1
-	            blk{length(blk)+1}=[ind(sid),ind(eid)];
+                    blk{length(blk)+1}=[ind(sid),ind(eid)];
                 end
                 sid=f(i);
             end
@@ -60,13 +60,14 @@ for j=1:length(Jcol)-1
         end
     end
 end
-fprintf('len(blk):%d\n',length(blk))
+fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
 
-Yrt=YOmega;
+Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;
 XOmega=Amap(X,ii);
 spZ=ATmap((Yrt-XOmega)/2,ii);
 Xold=XOmega;
+Yold=Yrt;
 if mu0<0 
     continuation_steps=4;
 else
@@ -74,6 +75,7 @@ else
 end
 par.continuation=0.5;mu0=mu0/((par.continuation)^continuation_steps);
 res=0; mu=mu0;
+idx=1:length(Yrt);
 for j=1:continuation_steps
     mu=par.continuation*mu;    
     
@@ -81,13 +83,19 @@ for j=1:continuation_steps
         %% UPDATE 
         if par.nnp
             sv=NNP_LR_SP(mu,sv,par);
-            ch=norm(Amap(X,ii)-Xold)^2/n;
+            chX=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
-            fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,ch)                        
+            fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)                        
             
             Yrt_temp=(Yrt+XOmega)/2;            
-            [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
-            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';             
+            if ~isempty(blk)
+                [Yrt_temp,ii,idx]=block_sort(Yrt_temp,ii,blk);
+            end
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt'; 
+            chY=norm(Yrt-Yold(idx))^2/n;
+            fprintf('Ych:%f\n',chY)
+            ch=max(chX,chY);
+            
             XOmega=Amap(X,ii);
             spZ=ATmap((Yrt-XOmega)/2,ii);     
         else

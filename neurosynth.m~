@@ -33,13 +33,12 @@ for i=1:length(niter)
         %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test
         ii_train=ii;
         Yrmc.U=zeros(d1,10);Yrmc.V=zeros(d2,10);
-        Yrt=yy;
         for m=1:length(muiter)           
             mu=mu0*muiter(m);
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,Yrt); 
+            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc); 
             t=toc;
             yest=Amap_MatComp(Yrmc,ii,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f,K,th);            

@@ -79,6 +79,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 //    double temp[n];
 //    vec_sub(y,z,n,temp);
 //    mexPrintf("ch=%f\n",dotproduct(temp,temp,n));
-    mexPrintf(" Ych=%f\n",change);
+    mexPrintf(" ch=%f ",change);
     return;        
 }

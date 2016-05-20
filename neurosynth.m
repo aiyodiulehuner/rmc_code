@@ -15,8 +15,8 @@ niter=1;
 par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
-RMC=1;
-SMC=0;
+RMC=0;
+SMC=1;
 K=10;
 th=0.5;
 if (RMC)
@@ -65,14 +65,14 @@ end
 end
 
 if SMC
-muiter=[5e4,2.8e4,1e4,5000,1000,500,100,50];
+muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,500,100,50];
 resultSMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
-mu0=1;%sum(svd(Y));
-
+mu0=1;
+niter=5;
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
-        load(sprintf('../neurosynth_counts/folds/neurosynth_%d.mat',round(p*100)));
+        load(sprintf('../neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
@@ -102,47 +102,10 @@ for i=1:length(niter)
             
             fprintf('SMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Ysmc.U.^2)),t);
-            save('resultSMC.mat','resultSMC')
-            save(sprintf('ysmc_%d_%d.mat',round(p*100),m),'Ysmc','t')
+            save(sprintf('smc%d/esultSMC.mat',i),'resultSMC')
+            save(sprintf('smc%d/ysmc_%d_%d.mat',i,round(p*100),m),'Ysmc','t')
         end
     end          
 end 
 end
 
-
-
-
-
-
-plt=0;
-if (plt)
-    load('resultSMC')
-    resultbestSMC=zeros(niter, length(probiter),length(f));
-    for i=1:niter
-        for pi=1:length(probiter)
-            temp=squeeze(resultSMC(i,pi,:,:));
-            [k,m]=max(temp);
-            %k(3)=k(3)^2;
-            resultbestSMC(i,pi,:)= k;
-        end
-    end
-    resultbestRMC=zeros(niter, length(probiter),length(f));
-    for i=1:niter
-        for pi=1:length(probiter)
-            temp=squeeze(resultRMC(i,pi,:,:));
-            [k,m]=max(temp);
-            %k(3)=k(3)^2;
-            resultbestRMC(i,pi,:)= k;
-        end
-    end
-    f={'Spearman \rho', 'Kendall \tau', 'NDCG\@50'};
-    figure()
-    for k=1:length(f)
-        subplot(1,length(f),k);
-        plot(probiter,squeeze(resultbestSMC(i,:,k)),'-o','LineWidth',2); hold on;
-        plot(probiter,squeeze(resultbestRMC(i,:,k)),'-o','LineWidth',2); hold on;
-        xlabel('$\frac{|\Omega|}{2d_1d_2}$','Interpreter','latex','FontSize',16)
-        ylabel(f(k),'FontSize',16)           
-    end
-    legend({'SMC','RMC'})
-end

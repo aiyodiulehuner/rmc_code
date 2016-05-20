@@ -3,3 +3,5 @@
 results/yrmc*.mat
 results/ysmc*.mat
 cofirank*
+*.mat
+results/*.mat

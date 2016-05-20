@@ -15,8 +15,8 @@ niter=1;
 par.maxrank=1000;
 cviter=1;
 par.nnp = 1;
-RMC=1;
-SMC=0;
+RMC=0;
+SMC=1;
 K=5;
 th=3;
 if (RMC)
@@ -72,7 +72,7 @@ mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for ci=1:length(cviter)
         cv=cviter(ci);
-        load(sprintf('../ml-100k/folds/ml_a.mat'));
+        load(sprintf('../ml-100k/folds/ml_b.mat'));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...
             length(yy),length(yy_val),length(yy_test));
@@ -87,7 +87,7 @@ for i=1:length(niter)
             [Ysmc,iter,res]=smc(ii,Jcol,jj,yy,d1,d2,mu,par,Ysmc);            
             t=toc;
             yest=Amap_MatComp(Ysmc,ii_train,Jcol);            
-            k1=evalRanking(yy,yest,Jcol,f,K,th);            
+            k1=evalRanking(yy,yest,Jcol,f,K,th);          
             resultSMC(i,ci,m,1,:)=k1;
             
             %validation            
@@ -103,7 +103,7 @@ for i=1:length(niter)
             fprintf('SMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Ysmc.U.^2)),t);
             save('ml_resultSMC.mat','resultSMC')
-            save(sprintf('ml_ysmc_a_%d.mat',m),'Ysmc','t')
+            save(sprintf('ml_ysmc_b_%d.mat',m),'Ysmc','t')
         end
     end          
 end 

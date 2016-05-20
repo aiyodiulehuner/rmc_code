@@ -36,7 +36,8 @@ for pi=1:length(probiter)
         val={yy_val,ii_val,Jcol_val};
         test={yy_test,ii_test,Jcol_test};
         
-        save(sprintf('../neurosynth_counts/folds/neurosynth_%d.mat',round(p*100)),...
+       
+        save(sprintf('../neurosynth_counts/folds4/neurosynth_%d.mat',round(p*100)),...
             'yy','yy_val','yy_test','ii','ii_val','ii_test',...
             'Jcol','Jcol_val','Jcol_test','jj','jj_val','jj_test','d1','d2')
 end

@@ -21,7 +21,7 @@ K=5;
 th=3;
 if (RMC)
 muiter=[250,500,1000,1e4,5e4];    
-resultRMC=zeros(niter,length(cviter), length(muiter), 3, length(f));
+resultRMC=zeros(niter,cviter, length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for ci=1:length(cviter)

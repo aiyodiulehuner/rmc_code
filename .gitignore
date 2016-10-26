@@ -1,4 +1,5 @@
-# Compiled source #
+#
+Compiled source #
 ###################
 *.com
 *.class
@@ -50,6 +51,7 @@
 ehthumbs.db
 Thumbs.db
 
+Backup/*
 backup/*
 .ipynb_checkpoints/*
 ../../.ipynb_checkpoints/*

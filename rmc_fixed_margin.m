@@ -2,19 +2,19 @@
 % min ||X||_* st DX_j<= -eps_j 
 % [Xest,spZest,stat]
 function [Yest,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit,Yinit)
-Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol);  
+Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol); 
 if (length(YOmega)/(d1*d2)>0.6)
     ATmap = @(y,ii) full(sparse(ii,jj,y, d1,d2));
 else
     if (exist('mexspconvert')==3); 
         ATmap = @(y,ii) mexspconvert(d1,d2,y,ii,Jcol); 
     else
-        ATmap = @(y,ii) sparse(ii,jj,y, d1,d2); 
+        ATmap = @(y,ii) sparse(ii,jj,y, d1,d2);
     end
 end
 
 %% Initialize Variables
-sv=par.maxrank; 
+sv=par.maxrank;
 
 global X spZ
 rinit=10;
@@ -29,7 +29,7 @@ for j=1:length(Jcol)-1
     ind = Jcol(j)+1:Jcol(j+1);
     Yj=diff(YOmega(ind));%diff(y)=y(i)-y(i+1)
 
-    eps_temp=eps0*(Yj>=1e-5);%>1e-5);
+    eps_temp=eps0*(Yj>=1e-5);
     eps(ind)=[0;cumsum(eps_temp)];
     eps(ind)=eps(ind)-max(eps(ind))/2.0;
     %create blks
@@ -73,7 +73,7 @@ res=0; mu=mu0;
 idx=1:length(Yrt);
 for j=1:continuation_steps
     mu=par.continuation*mu;
-    
+
     for iter=1:par.maxiter
         %% UPDATE 
         if par.nnp
@@ -87,7 +87,7 @@ for j=1:continuation_steps
             XOmega=Amap(X,ii);
             spZ=ATmap(eta*(Yrt-XOmega),ii) 
 
-            chX=norm(XOmega-Xold)^2/n;            
+            chX=norm(XOmega-Xold)^2/n;
             chY=norm(Yrt-Yold(idx))^2/n;
             fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)
             fprintf('Ych:%f\n',chY)
@@ -102,15 +102,15 @@ for j=1:continuation_steps
             ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
             
-            Yrt_temp=(Yrt+XOmega)/2;
+            Yrt_temp=(Yrt+XOmega)/2; 
             if ~isempty(blk)
                 [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
             end
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';
             
             XOmega=Amap(X,ii); 
-            spZ=ATmap((Yrt-XOmega)/2,ii); 
-        end  
+            spZ=ATmap((Yrt-XOmega)/2,ii);
+        end 
         %% EXIT CONDITIONS
         res=norm(Yrt-XOmega);
         %ch=norm(Xold-XOmega)/sqrt(length(XOmega));

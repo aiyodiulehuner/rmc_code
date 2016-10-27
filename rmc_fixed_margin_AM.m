@@ -72,8 +72,8 @@ par.continuation=0.5;mu0=mu0/((par.continuation)^continuation_steps);
 res=0; mu=mu0;
 idx=1:length(Yrt);
 for j=1:continuation_steps
-    mu=par.continuation*mu; 
-   
+    mu=par.continuation*mu;
+
     for iter=1:par.maxiter
         %% UPDATE 
         if par.nnp
@@ -86,7 +86,7 @@ for j=1:continuation_steps
             end
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';
             spZ=ATmap(eta*(Yrt-XOmega),ii);
-            
+
             chX=norm(XOmega-Xold)^2/n;
             chY=norm(Yrt-Yold(idx))^2/n;
             fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)
@@ -96,9 +96,9 @@ for j=1:continuation_steps
             Xold=XOmega;
             Yold=Yrt;
         else
-            sv=SVT_LR_SP(mu,sv,par);
-            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));
-            
+            sv=SVT_LR_SP(mu,sv,par); 
+            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V'))); 
+ 
             ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
             
@@ -106,9 +106,9 @@ for j=1:continuation_steps
             if ~isempty(blk)
                 [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
             end
-            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt'; 
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';
             
-            XOmega=Amap(X,ii); Y
+            XOmega=Amap(X,ii); 
             spZ=ATmap((Yrt-XOmega)/2,ii);
         end 
         %% EXIT CONDITIONS

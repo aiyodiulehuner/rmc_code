@@ -60,40 +60,39 @@ for i=1:niter
 end
 end
 if movielens
-cviter=1;
+cviter=5;
 K=5;
 th=3;
-niter=1;
 lambdaiter=5;
 f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 
-resultCOFI=zeros(niter,cviter, length(lambdaiter), 3, length(f));
-for i=1:niter
-    for cv=1:cviter
-        load(sprintf('../ml-100k/folds/ml_b.mat'));
-        fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...        
+resultCOFI=zeros(cviter, length(lambdaiter), 3, length(f));
+for cv=1:cviter
+    load(sprintf('../data/ml-100k/folds/ml_%d.mat',cv));
+    fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...        
                 length(yy),length(yy_val),length(yy_test));
-        for l=1:length(lambdaiter)
-            Ycofi.U=importdata(sprintf('cofirank_ml_b_50/U.csv'));
-            Ycofi.V=importdata(sprintf('cofirank_ml_b_50/V.csv'));
-            disp(Ycofi)
-            yest=Amap_MatComp(Ycofi,ii,Jcol);            
-            k1=evalRanking(yy,yest,Jcol,f,K,th);            
-            resultCOFI(i,cv,l,1,:)=k1;
-            %validation            
-            yest_val=Amap_MatComp(Ycofi,ii_val,Jcol_val);
-            k2=evalRanking(yy_val,yest_val,Jcol_val,f,K,th);
-            resultCOFI(i,cv,l,2,:)=k2;
+    for l=1:length(lambdaiter)
+        Ycofi.U=importdata(sprintf('results/cofirank/cofirank_ml_%d/U.csv',cv));
+        Ycofi.V=importdata(sprintf('results/cofirank/cofirank_ml_%d/V.csv',cv));
+        disp(Ycofi)
+        
+        %training
+        yest=Amap_MatComp(Ycofi,ii,Jcol);            
+        k1=evalRanking(yy,yest,Jcol,f,K,th);            
+        resultCOFI(cv,l,1,:)=k1;
 
-            %testing
-            yest_test=Amap_MatComp(Ycofi,ii_test,Jcol_test);
-            k3=evalRanking(yy_test,yest_test,Jcol_test,f,K,th);                
-            resultCOFI(i,cv,l,3,:)= k3;
+        %validation            
+        yest_val=Amap_MatComp(Ycofi,ii_val,Jcol_val);
+        k2=evalRanking(yy_val,yest_val,Jcol_val,f,K,th);
+        resultCOFI(cv,l,2,:)=k2;
+
+        %testing
+        yest_test=Amap_MatComp(Ycofi,ii_test,Jcol_test);
+        k3=evalRanking(yy_test,yest_test,Jcol_test,f,K,th);                
+        resultCOFI(cv,l,3,:)= k3;
             
-            save('ml_resultCOFI.mat','resultCOFI')
-            save(sprintf('ml_yrcofi_b_%d.mat',l),'Ycofi')
-        end
+        save('results/ml_resultCOFI.mat','resultCOFI')
+        save(sprintf('results/cofirank/ml_yrcofi_%d.mat',cv),'Ycofi')
     end
 end
-
 end

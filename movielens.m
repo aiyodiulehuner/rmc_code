@@ -39,7 +39,7 @@ if (RMC)
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin_AM(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,yy); 
+            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,yy); 
             t=toc;
             yest=Amap_MatComp(Yrmc,ii,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f,K,th);            
@@ -58,7 +58,7 @@ if (RMC)
             fprintf('RMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Yrmc.U.^2)),t);
             save('results/ml_resultRMC.mat','resultRMC')
-            save(sprintf('results/ml_yrmc_cv%d_mi%d.mat',ci,m),'Yrmc','t')
+            save(sprintf('results/ml_yrmc/ml_yrmc_cv%d_mi%d.mat',ci,m),'Yrmc','t')
         end
     end          
 end 

@@ -13,18 +13,18 @@ niter=1:5;
 par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
-RMC=0;
-SMC=1;
+RMC=1;
+SMC=0;
 K=10; %NDCG at 10
 th=0.5;
 if (RMC)
-muiter=[1e4,5000,500,250,100,50,10];
+muiter=[5e4,1e4,5000,100,500,100,50,10];
 resultRMC=zeros(lenth(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
-        load(sprintf('../data/neurosynth_counts/folds/neurosynth_%d.mat',round(p*100)));
+        load(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
@@ -37,9 +37,9 @@ for i=1:length(niter)
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin_AM(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,Yrt); 
+            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,yy); 
             t=toc;
-            yest=Amap_MatComp(Yrmc,ii,Jcol);            
+            yest=Amap_MatComp(Yrmc,ii,Jcol);
             k1=evalRanking(yy,yest,Jcol,f,K,th);            
             resultRMC(i,pi,m,1,:)=k1;
             
@@ -55,8 +55,8 @@ for i=1:length(niter)
             
             fprintf('RMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Yrmc.U.^2)),t);
-            save('resultRMC.mat','resultRMC')
-            save(sprintf('yrmc_%d_%d.mat',round(p*100),m),'Yrmc','t')
+            save('results/ns_resultRMC.mat','resultRMC')
+            save(sprintf('results/ns_yrmc_p%d/ns_yrmc_cv%d_mi%d.mat',round(p*100),i,m),'Yrmc','t')
         end
     end          
 end 

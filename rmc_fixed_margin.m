@@ -55,11 +55,12 @@ for j=1:length(Jcol)-1
     end
 end
 fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
+eps=eps/max(eps);
 
 Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;
 XOmega=Amap(X,ii);
-eta=0.5
+eta=0.5;
 spZ=ATmap(eta*(Yrt-XOmega),ii);
 Xold=XOmega;
 Yold=Yrt;
@@ -85,7 +86,7 @@ for j=1:continuation_steps
             end
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';
             XOmega=Amap(X,ii);
-            spZ=ATmap(eta*(Yrt-XOmega),ii) 
+            spZ=ATmap(eta*(Yrt-XOmega),ii);
 
 	    chY=norm(Yrt-Yold(idx))^2/n;
             fprintf(' Ych:%f\n',chY)

@@ -1,13 +1,13 @@
 clear;clc;clear global
-addpath('utils/');
+addpath('../utils/');
 
 Y=importdata('../../data/neurosynth_counts/count_matrix-1231-3169_log.csv');
 probiter = 0.2:0.2:0.8;
 [d1,d2]=size(Y);
 
-Omega=rand(size(Y));
 for i=1:5
     disp(randn(1))
+    Omega=rand(size(Y));
     for pi=1:length(probiter)
         p =probiter(pi);
         p_val=p+0.1; % 10 percent validation always

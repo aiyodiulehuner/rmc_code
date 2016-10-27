@@ -18,12 +18,12 @@ val_results_cvmean=squeeze(mean(val_results,1));
 msSMC(1,1)=mean(resultSMC(:,ix_ndcg,3,3));
 msSMC(2,1)=mean(resultSMC(:,ix_prec,3,5));
 msSMC(3,1)=mean(resultSMC(:,ix_tau,3,2));
-msSMC(4,1)=mean(resultSMC(:,ix_tau,3,1));
+msSMC(4,1)=mean(resultSMC(:,ix_rho,3,1));
 
 msSMC(1,2)=std(resultSMC(:,ix_ndcg,3,3));
 msSMC(2,2)=std(resultSMC(:,ix_prec,3,5));                                                    
 msSMC(3,2)=std(resultSMC(:,ix_tau,3,2));                                                     
-msSMC(4,2)=std(resultSMC(:,ix_tau,3,1));
+msSMC(4,2)=std(resultSMC(:,ix_rho,3,1));
 
 disp(msSMC)
 
@@ -40,12 +40,12 @@ val_results_cvmean=squeeze(mean(val_results,1));
 msRMC(1,1)=mean(resultRMC(:,ix_ndcg,3,3));                                                    
 msRMC(2,1)=mean(resultRMC(:,ix_prec,3,5));                                                    
 msRMC(3,1)=mean(resultRMC(:,ix_tau,3,2));                                                     
-msRMC(4,1)=mean(resultRMC(:,ix_tau,3,1));                                                     
+msRMC(4,1)=mean(resultRMC(:,ix_rho,3,1));                                                     
                                                                                               
 msRMC(1,2)=std(resultRMC(:,ix_ndcg,3,3));
 msRMC(2,2)=std(resultRMC(:,ix_prec,3,5)); 
 msRMC(3,2)=std(resultRMC(:,ix_tau,3,2)); 
-msRMC(4,2)=std(resultRMC(:,ix_tau,3,1));
+msRMC(4,2)=std(resultRMC(:,ix_rho,3,1));
 
 disp(msRMC)
 %}

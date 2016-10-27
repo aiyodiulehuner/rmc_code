@@ -13,7 +13,7 @@ f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 
 
 par.maxrank=1000;
-cviter=5;
+cviter=[1,2,3,4,5];
 par.nnp = 1;
 RMC=0;
 SMC=1;
@@ -26,7 +26,7 @@ if (RMC)
 
     for ci=1:length(cviter)
         cv=cviter(ci);
-        load(sprintf('../ml-100k/folds/ml_%d.mat',ci));
+        load(sprintf('../data/ml-100k/folds/ml_%d.mat',ci));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...
             length(yy),length(yy_val),length(yy_test));
@@ -57,8 +57,8 @@ if (RMC)
             
             fprintf('RMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Yrmc.U.^2)),t);
-            save('ml_resultRMC.mat','resultRMC')
-            save(sprintf('ml_yrmc_cv%d_mi%d.mat',ci,m),'Yrmc','t')
+            save('results/ml_resultRMC.mat','resultRMC')
+            save(sprintf('results/ml_yrmc_cv%d_mi%d.mat',ci,m),'Yrmc','t')
         end
     end          
 end 
@@ -70,7 +70,7 @@ if SMC
 
     for ci=1:length(cviter)
         cv=cviter(ci);
-        load(sprintf('../ml-100k/folds/ml_%d.mat',ci));
+        load(sprintf('../data/ml-100k/folds/ml_%d.mat',ci));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,cv,...
             length(yy),length(yy_val),length(yy_test));
@@ -100,8 +100,8 @@ if SMC
             
             fprintf('SMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Ysmc.U.^2)),t);
-            save('ml_resultSMC.mat','resultSMC')
-            save(sprintf('ml_ysmc_cv%d_mi%d.mat',ci,m),'Ysmc','t')
+            save('results/ml_resultSMC.mat','resultSMC')
+            save(sprintf('results/ml_ysmc_cv%d_mi%d.mat',ci,m),'Ysmc','t')
         end
     end          
 end 

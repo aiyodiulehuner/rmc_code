@@ -57,3 +57,5 @@ backup/*
 ../../.ipynb_checkpoints/*
 
 results/*
+cofirank*.config
+*.m~

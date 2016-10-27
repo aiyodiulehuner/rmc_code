@@ -7,7 +7,7 @@
 %% Kim-Chuan Toh and Sangwoon Yun 
 %%***************************************************
 
-   function jcB = compJcol(JJ); 
+   function jcB = compJcol(JJ,jMax); 
 
    jcBtmp = [0; find(diff(JJ))];
    coltmp = JJ(jcBtmp+1); 
@@ -21,5 +21,8 @@
       jcB(cnt+[1:len]) = jcBtmp(k)*ones(1,len);  
       cnt = cnt + len; 
    end
-   jcB = [jcB,length(JJ)]; 
+   if nargin<2
+      jMax=length(jcB)
+   end
+   jcB = [jcB,length(JJ)*ones(1,1+jMax-length(jcB))]; 
 %%***************************************************

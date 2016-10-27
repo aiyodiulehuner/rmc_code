@@ -55,6 +55,7 @@ for j=1:length(Jcol)-1
     end
 end
 fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
+eps=eps/max(eps);
 
 Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;
@@ -117,7 +118,7 @@ for j=1:continuation_steps
         %Xold=XOmega;
         if par.verbose
             fprintf('\titer:%d,sv:%d,res:%f/%f,ch:%f,muY:%f\n',...
-                iter,sv,res,2.0*norm(spZ,'fro'),ch,sum(sum(X.U.^2)))
+                iter,sv,res,norm(spZ,'fro')/eta,ch,sum(sum(X.U.^2)))
         end
         if (res<par.tol || ch<par.tol^2)
             break

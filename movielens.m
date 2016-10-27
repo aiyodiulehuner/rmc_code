@@ -13,14 +13,14 @@ f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 
 
 par.maxrank=1000;
-cviter=[5];
+cviter=[1,2,3,4,5];
 par.nnp = 1;
 RMC=1;
 SMC=0;
 K=5;
 th=3;
 if (RMC)
-    muiter=[500,1000,5000,1e4,5e4];    
+    muiter=[5e4,1e4,5000,1000,500,100,50];    
     resultRMC=zeros(length(cviter), length(muiter), 3, length(f));
     mu0=1;%sum(svd(Y));
 
@@ -39,7 +39,7 @@ if (RMC)
             fprintf('mu=%f, nnp:%d\n',mu,par.nnp)
             % training
             tic;
-            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin_AM(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,Yrt); 
+            [Yrmc,Yrt,iter,res,ii]=rmc_fixed_margin_AM(ii,Jcol,jj,yy,d1,d2,mu,par,Yrmc,yy); 
             t=toc;
             yest=Amap_MatComp(Yrmc,ii,Jcol);            
             k1=evalRanking(yy,yest,Jcol,f,K,th);            

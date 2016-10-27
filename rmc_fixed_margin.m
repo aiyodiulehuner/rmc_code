@@ -87,10 +87,10 @@ for j=1:continuation_steps
             XOmega=Amap(X,ii);
             spZ=ATmap(eta*(Yrt-XOmega),ii) 
 
-            chX=norm(XOmega-Xold)^2/n;
-            chY=norm(Yrt-Yold(idx))^2/n;
+	    chY=norm(Yrt-Yold(idx))^2/n;
+            fprintf(' Ych:%f\n',chY)
+	    chX=norm(XOmega-Xold)^2/n;
             fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)
-            fprintf('Ych:%f\n',chY)
             ch=max(chX,chY);
             
             Xold=XOmega;

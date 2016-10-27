@@ -59,7 +59,7 @@ fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
 Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;
 XOmega=Amap(X,ii);
-eta=1
+eta=1;
 spZ=ATmap(eta*(Yrt-XOmega),ii);
 Xold=XOmega;
 Yold=Yrt;
@@ -86,18 +86,18 @@ for j=1:continuation_steps
             end
             Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';
             spZ=ATmap(eta*(Yrt-XOmega),ii);
-
+	    
+	    chY=norm(Yrt-Yold(idx))^2/n;
+	    fprintf(' Ych:%f\n',chY)
             chX=norm(XOmega-Xold)^2/n;
-            chY=norm(Yrt-Yold(idx))^2/n;
-            fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)
-            fprintf('Ych:%f\n',chY)
+            fprintf('\t\t NNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)
             ch=max(chX,chY);
             
             Xold=XOmega;
             Yold=Yrt;
         else
             sv=SVT_LR_SP(mu,sv,par); 
-            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V'))); 
+            fprintf('\n\t\t SVT: sv:%d,muX:%f',sv,sum(svd(X.U*X.V'))); 
  
             ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);

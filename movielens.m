@@ -13,15 +13,15 @@ f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
 
 
 par.maxrank=1000;
-cviter=[1,2,3,4,5];
+cviter=[5];
 par.nnp = 1;
-RMC=0;
-SMC=1;
+RMC=1;
+SMC=0;
 K=5;
 th=3;
 if (RMC)
-    muiter=[1,5,10,20,50,100,250,500,1000];    
-    resultRMC=zeros(cviter, length(muiter), 3, length(f));
+    muiter=[500,1000,5000,1e4,5e4];    
+    resultRMC=zeros(length(cviter), length(muiter), 3, length(f));
     mu0=1;%sum(svd(Y));
 
     for ci=1:length(cviter)

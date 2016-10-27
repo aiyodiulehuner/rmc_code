@@ -1,3 +1,5 @@
+addpath('pav');
+addpath('utils/');
 addpath('NNLS-0/solver');
 addpath('NNLS-0/PROPACKmod/');
 clear;clc;clear global
@@ -19,7 +21,7 @@ K=10; %NDCG at 10
 th=0.5;
 if (RMC)
 muiter=[5e4,1e4,5000,100,500,100,50,10];
-resultRMC=zeros(lenth(niter),length(probiter), length(muiter), 3, length(f));
+resultRMC=zeros(length(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for pi=1:length(probiter)

@@ -28,26 +28,26 @@ msSMC(4,2)=std(resultSMC(:,ix_tau,3,1));
 disp(msSMC)
 
 %%RMC
-%load(sprintf('../results/ml_resultRMC.mat'))
-%val_results=squeeze(resultRMC(:,:,2,:));
-%val_results_cvmean=squeeze(mean(val_results,1));
+load(sprintf('../results/ml_resultRMC.mat'))
+val_results=squeeze(resultRMC(:,:,2,:));
+val_results_cvmean=squeeze(mean(val_results,1));
     
-%[~,ix_ndcg]=max(val_results_cvmean(:,3));disp(ix_ndcg')
-%[~,ix_tau]=max(val_results_cvmean(:,2));disp(ix_tau')
-%[~,ix_prec]=max(val_results_cvmean(:,5));disp(ix_prec')
-%[~,ix_rho]=max(val_results_cvmean(:,1));disp(ix_rho')
+[~,ix_ndcg]=max(val_results_cvmean(:,3));disp(ix_ndcg')
+[~,ix_tau]=max(val_results_cvmean(:,2));disp(ix_tau')
+[~,ix_prec]=max(val_results_cvmean(:,5));disp(ix_prec')
+[~,ix_rho]=max(val_results_cvmean(:,1));disp(ix_rho')
 
-%msRMC(1,1)=mean(resultRMC(:,ix_ndcg,3,3));                                                    
-%msRMC(2,1)=mean(resultRMC(:,ix_prec,3,5));                                                    
-%msRMC(3,1)=mean(resultRMC(:,ix_tau,3,2));                                                     
-%msRMC(4,1)=mean(resultRMC(:,ix_tau,3,1));                                                     
+msRMC(1,1)=mean(resultRMC(:,ix_ndcg,3,3));                                                    
+msRMC(2,1)=mean(resultRMC(:,ix_prec,3,5));                                                    
+msRMC(3,1)=mean(resultRMC(:,ix_tau,3,2));                                                     
+msRMC(4,1)=mean(resultRMC(:,ix_tau,3,1));                                                     
                                                                                               
-%msRMC(1,2)=std(resultRMC(:,ix_ndcg,3,3));
-%msRMC(2,2)=std(resultRMC(:,ix_prec,3,5)); 
-%msRMC(3,2)=std(resultRMC(:,ix_tau,3,2)); 
-%msRMC(4,2)=std(resultRMC(:,ix_tau,3,1));
+msRMC(1,2)=std(resultRMC(:,ix_ndcg,3,3));
+msRMC(2,2)=std(resultRMC(:,ix_prec,3,5)); 
+msRMC(3,2)=std(resultRMC(:,ix_tau,3,2)); 
+msRMC(4,2)=std(resultRMC(:,ix_tau,3,1));
 
-%disp(msRMC)
+disp(msRMC)
 %}
 %COFIRANK
 load('../results/ml_resultCOFI.mat')

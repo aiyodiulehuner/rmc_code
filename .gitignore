@@ -59,3 +59,4 @@ backup/*
 results/*
 cofirank*.config
 *.m~
+*.swp

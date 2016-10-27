@@ -1,12 +1,13 @@
 clear;clc;clear global
 addpath('utils/');
 
-Y=importdata('../data/neurosynth_counts/count_matrix-1231-3169.csv');
+Y=importdata('../../data/neurosynth_counts/count_matrix-1231-3169_log.csv');
 probiter = 0.2:0.2:0.8;
 [d1,d2]=size(Y);
 
 Omega=rand(size(Y));
-for i in range(5):
+for i=1:5
+    disp(randn(1))
     for pi=1:length(probiter)
         p =probiter(pi);
         p_val=p+0.1; % 10 percent validation always
@@ -38,7 +39,7 @@ for i in range(5):
         test={yy_test,ii_test,Jcol_test};
         
        
-        save(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i+1,round(p*100)),...
+        save(sprintf('../../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)),...
             'yy','yy_val','yy_test','ii','ii_val','ii_test',...
             'Jcol','Jcol_val','Jcol_test','jj','jj_val','jj_test','d1','d2')
     end

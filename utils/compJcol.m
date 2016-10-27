@@ -22,7 +22,7 @@
       cnt = cnt + len; 
    end
    if nargin<2
-      jMax=length(jcB)
+      jMax=length(jcB);
    end
    jcB = [jcB,length(JJ)*ones(1,1+jMax-length(jcB))]; 
 %%***************************************************

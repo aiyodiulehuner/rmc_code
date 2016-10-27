@@ -1,32 +1,30 @@
-clear;clc
-addpath('pav')
-addpath('utils/');
 addpath('NNLS-0/solver');
 addpath('NNLS-0/PROPACKmod/');
-clear global
+clear;clc;clear global
 
 %parameters
 par.tol     = 1e-3;
 par.maxiter = 50;
 par.verbose = 1;
-f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE', 'Precision'};
-niter=1;
+f={'spearman_rho', 'kendall_tau', 'NDCG', 'MSE'}%, 'Precision': doesnt make sense without clear thresholds
+
+niter=1:5;
 
 par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
 RMC=0;
 SMC=1;
-K=10;
+K=10; %NDCG at 10
 th=0.5;
 if (RMC)
 muiter=[1e4,5000,500,250,100,50,10];
-resultRMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
+resultRMC=zeros(lenth(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
-        load(sprintf('../neurosynth_counts/folds/neurosynth_%d.mat',round(p*100)));
+        load(sprintf('../data/neurosynth_counts/folds/neurosynth_%d.mat',round(p*100)));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
@@ -66,13 +64,13 @@ end
 
 if SMC
 muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,500,100,50];
-resultSMC=zeros(niter,length(probiter), length(muiter), 3, length(f));
+resultSMC=zeros(length(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;
-niter=5;
+niter=1:5;
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
-        load(sprintf('../neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)));
+        load(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
@@ -102,8 +100,8 @@ for i=1:length(niter)
             
             fprintf('SMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Ysmc.U.^2)),t);
-            save(sprintf('smc%d/esultSMC.mat',i),'resultSMC')
-            save(sprintf('smc%d/ysmc_%d_%d.mat',i,round(p*100),m),'Ysmc','t')
+            save(sprintf('results/ns_resultSMC.mat'),'resultSMC')
+            save(sprintf('results/ns_ysmc_p%d/ysmc_cv%d_mi%d.mat',round(p*100),i,m),'Ysmc','t')
         end
     end          
 end 

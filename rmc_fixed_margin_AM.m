@@ -2,29 +2,22 @@
 % min ||X||_* st DX_j<= -eps_j 
 % [Xest,spZest,stat]
 function [Yest,Yrt,iter,res,ii]=rmc_fixed_margin(ii,Jcol,jj,YOmega,d1,d2,mu0,par,Xinit,Yinit)
-
-Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol);  
+Amap  = @(X,ii) Amap_MatComp(X,ii,Jcol); 
 if (length(YOmega)/(d1*d2)>0.6)
     ATmap = @(y,ii) full(sparse(ii,jj,y, d1,d2));
 else
     if (exist('mexspconvert')==3); 
         ATmap = @(y,ii) mexspconvert(d1,d2,y,ii,Jcol); 
     else
-        ATmap = @(y,ii) sparse(ii,jj,y, d1,d2); 
+        ATmap = @(y,ii) sparse(ii,jj,y, d1,d2);
     end
 end
 
 %% Initialize Variables
-sv=par.maxrank; 
+sv=par.maxrank;
 
 global X spZ
 rinit=10;
-%eps=zeros(d2,1);
-%for j=1:length(Jcol)-1
-%    ind = Jcol(j)+1:Jcol(j+1);
-%    ydiff=diff(YOmega(ind));
-%    eps(j) = min(ydiff(ydiff>1e-5));
-%end
 
 n=length(YOmega);
 %compute epsilon
@@ -66,7 +59,8 @@ fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
 Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;
 XOmega=Amap(X,ii);
-spZ=ATmap((Yrt-XOmega),ii);
+eta=1
+spZ=ATmap(eta*(Yrt-XOmega),ii);
 Xold=XOmega;
 Yold=Yrt;
 if mu0<0 
@@ -78,55 +72,56 @@ par.continuation=0.5;mu0=mu0/((par.continuation)^continuation_steps);
 res=0; mu=mu0;
 idx=1:length(Yrt);
 for j=1:continuation_steps
-    mu=par.continuation*mu;    
-    
+    mu=par.continuation*mu; 
+   
     for iter=1:par.maxiter
         %% UPDATE 
         if par.nnp
             sv=NNP_LR_SP(mu,sv,par);
-            chX=norm(Amap(X,ii)-Xold)^2/n;
+
             XOmega=Amap(X,ii);
-            fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)                        
-            
-            Yrt_temp=XOmega;
+            Yrt_temp=(1-eta)*Yrt+eta*XOmega;  
             if ~isempty(blk)
                 [Yrt_temp,ii,idx]=block_sort(Yrt_temp,ii,blk);
             end
-            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt'; 
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';
+            spZ=ATmap(eta*(Yrt-XOmega),ii);
+            
+            chX=norm(XOmega-Xold)^2/n;
             chY=norm(Yrt-Yold(idx))^2/n;
+            fprintf('\t\tNNP: sv:%d, mu:%f, Xch:%f\n',sv,mu,chX)
             fprintf('Ych:%f\n',chY)
             ch=max(chX,chY);
-            spZ=ATmap((Yrt-XOmega),ii);     
+            
             Xold=XOmega;
             Yold=Yrt;
         else
-            sv=SVT_LR_SP(mu,sv,par);      
-            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));      
+            sv=SVT_LR_SP(mu,sv,par);
+            fprintf('\t\t SVT: sv:%d,muX:%f\n',sv,sum(svd(X.U*X.V')));
             
             ch=norm(Amap(X,ii)-Xold)^2/n;
             Xold=Amap(X,ii);
             
-            Yrt_temp=(Yrt+XOmega)/2;   
+            Yrt_temp=(Yrt+XOmega)/2; 
             if ~isempty(blk)
                 [Yrt_temp,ii]=block_sort(Yrt_temp,ii,blk);
             end
-            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt';  
+            Yrt=c_colMR_fixed_margin(Yrt_temp',eps',Jcol'); Yrt=Yrt'; 
             
             XOmega=Amap(X,ii); Y
-            spZ=ATmap((Yrt-XOmega)/2,ii);                       
-        end  
+            spZ=ATmap((Yrt-XOmega)/2,ii);
+        end 
         %% EXIT CONDITIONS
-        res=norm(Yrt-XOmega);   
+        res=norm(Yrt-XOmega);
         %ch=norm(Xold-XOmega)/sqrt(length(XOmega));
         %Xold=XOmega;
         if par.verbose
             fprintf('\titer:%d,sv:%d,res:%f/%f,ch:%f,muY:%f\n',...
-                iter,sv,res,2.0*norm(spZ,'fro'),ch,sum(sum(X.U.^2)))            
-        end  
-
+                iter,sv,res,2.0*norm(spZ,'fro'),ch,sum(sum(X.U.^2)))
+        end
         if (res<par.tol || ch<par.tol^2)
             break
-        end                
+        end
     end
 end
 Yest=X;

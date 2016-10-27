@@ -101,7 +101,7 @@ if SMC
             fprintf('SMC  mu:%f. iter:%d, res:%f, ||X||_*:%f, t:%f\n', ...
                 mu, iter,res,sum(sum(Ysmc.U.^2)),t);
             save('results/ml_resultSMC.mat','resultSMC')
-            save(sprintf('results/ml_ysmc_cv%d_mi%d.mat',ci,m),'Ysmc','t')
+            save(sprintf('results/ml_ysmc/ml_ysmc_cv%d_mi%d.mat',ci,m),'Ysmc','t')
         end
     end          
 end 

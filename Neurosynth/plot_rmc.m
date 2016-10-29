@@ -72,9 +72,7 @@ close all
 pli={'NDCG@10','Spearman Rho','Kendall Tau'};
 np=length(pli);
 
-csvwrite('../results/msRMC.csv',msSMC)
-csvwrite('../results/msSMC.csv',msRMC)
-
+save('../results/ms_rmc','msRMC','msSMC')
 % FIGURES IN plot_rmc.ipynb
 
 h=figure();

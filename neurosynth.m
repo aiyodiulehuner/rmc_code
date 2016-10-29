@@ -15,12 +15,12 @@ niter=1:5;
 par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
-RMC=0;
-SMC=1;
+RMC=1;
+SMC=0;
 K=10; %NDCG at 10
 th=0.5;
 if (RMC)
-muiter=[5e4,1e4,5000,100,500,100,50,10];
+muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,750,500,250,100,50,10];
 resultRMC=zeros(length(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)

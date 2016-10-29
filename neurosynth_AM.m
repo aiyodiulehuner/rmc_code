@@ -20,7 +20,7 @@ SMC=0;
 K=10; %NDCG at 10
 th=0.5;
 if (RMC)
-muiter=[5e4,1e4,5000,100,500,100,50,10];
+muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,750,500,250,100,50,10];
 resultRMC=zeros(length(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;%sum(svd(Y));
 for i=1:length(niter)
@@ -65,7 +65,7 @@ end
 end
 
 if SMC
-muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,500,100,50];
+muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,750,500,250,100,50];
 resultSMC=zeros(length(niter),length(probiter), length(muiter), 3, length(f));
 mu0=1;
 niter=1:5;

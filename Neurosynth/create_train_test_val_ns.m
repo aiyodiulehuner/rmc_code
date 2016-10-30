@@ -1,7 +1,7 @@
 clear;clc;clear global
 addpath('../utils/');
 
-Y=importdata('../../data/neurosynth_counts/count_matrix-1231-3169_log.csv');
+Y=importdata('../../data/neurosynth_counts/count_matrix-1231-3169_unorm.csv');
 probiter = 0.2:0.2:0.8;
 [d1,d2]=size(Y);
 
@@ -39,7 +39,7 @@ for i=1:5
         test={yy_test,ii_test,Jcol_test};
         
        
-        save(sprintf('../../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)),...
+        save(sprintf('../../data/neurosynth_counts/folds%d/neurosynth_%d_unorm.mat',i,round(p*100)),...
             'yy','yy_val','yy_test','ii','ii_val','ii_test',...
             'Jcol','Jcol_val','Jcol_test','jj','jj_val','jj_test','d1','d2')
     end

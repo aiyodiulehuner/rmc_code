@@ -15,8 +15,8 @@ niter=1:5;
 par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
-RMC=1;
-SMC=0;
+RMC=0;
+SMC=1;
 K=10; %NDCG at 10
 th=0.5;
 if (RMC)

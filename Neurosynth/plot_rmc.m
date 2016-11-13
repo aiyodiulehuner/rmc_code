@@ -38,10 +38,9 @@ end
 %clear resultSMC,val_results,val_results_cvmean,pi,ix_ndcg,ix_tau,ix_rho;
 
 load(sprintf('../results/ns_resultRMC.mat'))
-niter=1:3
 
 val_results=squeeze(resultRMC(:,:,:,2,:));
-val_results_cvmean=squeeze(mean(val_results(niter,:,:,:),1));
+val_results_cvmean=squeeze(mean(val_results(,:,:,:),1));
 msRMC=zeros(length(probiter),5,2);
 for pi=1:length(probiter)
     fprintf('p=%0.2g\n',probiter(pi))
@@ -52,15 +51,15 @@ for pi=1:length(probiter)
     [~,ix_mse]=min(val_results_cvmean(pi,:,4));
 
      fprintf('\t ndcg=%d,rho=%d,tau=%d\n',ix_ndcg,ix_rho,ix_tau) 
-     msRMC(pi,1,1)=mean(resultRMC(niter,pi,ix_ndcg,3,3));                                          
-     msRMC(pi,2,1)=mean(resultRMC(niter,pi,ix_rho,3,1));                                          
-     msRMC(pi,3,1)=mean(resultRMC(niter,pi,ix_tau,3,2));                                          
-     msRMC(pi,4,1)=mean(resultRMC(niter,pi,ix_mse,3,4));
+     msRMC(pi,1,1)=mean(resultRMC(:,pi,ix_ndcg,3,3));                                          
+     msRMC(pi,2,1)=mean(resultRMC(:,pi,ix_rho,3,1));                                          
+     msRMC(pi,3,1)=mean(resultRMC(:,pi,ix_tau,3,2));                                          
+     msRMC(pi,4,1)=mean(resultRMC(:,pi,ix_mse,3,4));
                                                                                               
-     msRMC(pi,1,2)=std(resultRMC(niter,pi,ix_ndcg,3,3));                                           
-     msRMC(pi,2,2)=std(resultRMC(niter,pi,ix_rho,3,1));                                           
-     msRMC(pi,3,2)=std(resultRMC(niter,pi,ix_tau,3,2));               
-     msRMC(pi,4,2)=std(resultRMC(niter,pi,ix_mse,3,4));
+     msRMC(pi,1,2)=std(resultRMC(:,pi,ix_ndcg,3,3));                                           
+     msRMC(pi,2,2)=std(resultRMC(:,pi,ix_rho,3,1));                                           
+     msRMC(pi,3,2)=std(resultRMC(:,pi,ix_tau,3,2));               
+     msRMC(pi,4,2)=std(resultRMC(:,pi,ix_mse,3,4));
 
      tp=zeros(length(niter),1);
      for i=1:length(niter)

@@ -87,7 +87,7 @@ function ndcg_k=NDCG(x,y,K,th)
     [yy,ii]=sort(y,'descend');
     r=(1:length(yy))';%r=1 for highest y, 2 for second highest, ...ri=rank(i) in y
     l=x(ii);%l=l/max(l); % true relevance of item in rth position 
-    log2r = log2(r+2.0);
+    log2r = log2(r+1.0);
     exp2l = (2.0.^l) - 1.0;
     [~,indg]  = sort(l,'descend');
         

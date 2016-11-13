@@ -1,23 +1,9 @@
-# rmc_code
-addpath('NNLS-0/solver');
-addpath('NNLS-0/PROPACKmod/');
-addpath('pav');
-addpath('utils');
+smc.m: function implementing standard matrix completion
+rmc_fixed_margin.m: function implementing the proposed monorone retargetted preference completion algorithm. 
 
-utils/
-[yys,iis,Jcol]=processInput(ii,jj,yy)
-returns csc format: iis are indices, Jcol is indptr (starts at 0
-ii(Jcol(j)+1:Jcol(j+1)) is ordered such that yy(Jcol(j)+1:Jcol(j+1)) is sorted min->max
+movienlens.m and neurosynth.m scripts to run smc and rmc on movielens and neurosynth datasets (Warning: has some hardcoded numbers and paths)
 
-evalRanking:
-implementation of Spearman Rho, Kendall Tau, NDCG@k
-
-Atxz, Axz 
-A=X.U*X.V'+spZ X,spZ are global variables
-returns A'z, Az
-
-
-NNLS-0/solver/
-x=Amap_MatComp(X,ii,Jcol) -> X->POmega(X)
+Movielens/:  Folder with scripts to process data and results of Movielens dataset
+Neurosynth/: Folder with scripts to process data and results of Neurosynth dataset
 
 

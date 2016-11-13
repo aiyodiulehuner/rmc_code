@@ -24,12 +24,12 @@ n=length(YOmega);
 eps0=1e-3;
 eps=zeros(n,1);
 blk={};
-
+ydiff_thresh=1e-15;
 for j=1:length(Jcol)-1
     ind = Jcol(j)+1:Jcol(j+1);
     Yj=diff(YOmega(ind));%diff(y)=y(i)-y(i+1)
 
-    eps_temp=eps0*(Yj>=1e-5);
+    eps_temp=eps0*(Yj>=ydiff_thresh);
     eps(ind)=[0;cumsum(eps_temp)];
     eps(ind)=eps(ind)-max(eps(ind))/2.0;
     %create blks
@@ -54,8 +54,10 @@ for j=1:length(Jcol)-1
         end
     end
 end
-fprintf('len(blk):%d,max(eps):%d\n',length(blk),max(eps))
+
+fprintf('len(blk):%d,max(eps):%0.2g\n',length(blk), max(eps))
 eps=eps/max(eps);
+fprintf('max(eps):%0.2g\n',max(eps))
 
 Yrt=Yinit;%Omega;
 X.U=Xinit.U;X.V=Xinit.V;

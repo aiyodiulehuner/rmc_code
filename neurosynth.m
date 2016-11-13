@@ -15,9 +15,9 @@ niter=1:5;
 par.maxrank=100;
 probiter=0.2:0.2:0.8;
 par.nnp = 1;
-RMC=0;
-SMC=1;
-K=10; %NDCG at 10
+RMC=1;
+SMC=0;
+K=20; %NDCG at 20
 th=0.5;
 if (RMC)
 muiter=[5e4,2.5e4,1e4,7500,5000,2500,1000,750,500,250,100,50,10];
@@ -26,11 +26,10 @@ mu0=1;%sum(svd(Y));
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
-        load(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)));
+        load(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d_unorm.mat',i,round(p*100)));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
-        %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test
         ii_train=ii;
         Yrmc.U=zeros(d1,10);Yrmc.V=zeros(d2,10);
         Yrt=yy;
@@ -72,11 +71,10 @@ niter=1:5;
 for i=1:length(niter)
     for pi=1:length(probiter)
         p=probiter(pi);
-        load(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d.mat',i,round(p*100)));
+        load(sprintf('../data/neurosynth_counts/folds%d/neurosynth_%d_unorm.mat',i,round(p*100)));
         par.maxrank = min([d1,d2,par.maxrank]);
         fprintf('Size: %dX%d, p:%f, train:val:test::%d:%d:%d\n',d1,d2,p,...
             length(yy),length(yy_val),length(yy_test));
-        %d1,d2,yy,ii,Jcol,yy_val,ii_val,Jcol_val,yy_test,ii_test,Jcol_test
         ii_train=ii;         
         Ysmc.U=zeros(d1,10);Ysmc.V=zeros(d2,10);
         for m=1:length(muiter)           
